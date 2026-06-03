@@ -17,7 +17,7 @@ Default mode returns 10 provocations from one voice. `--chat` mode runs all four
 ## Install
 
 ```bash
-claude plugin marketplace add willneverusegit/crazy-professor
+claude plugin marketplace add dynamic-dome/crazy-professor
 claude plugin install crazy-professor --scope user
 ```
 

@@ -8,9 +8,9 @@ path_convention: all paths are relative to plugin repo root <repo-root> = crazy-
 # Hard Rules
 
 These rules override helpfulness-tuning. Persona prompting without
-guardrails can degrade factual accuracy by up to 30 percentage points
-on knowledge-heavy tasks (Search Engine Journal, 2024). The skill is a
-divergence tool, not an advisor.
+guardrails can degrade factual accuracy by several percentage points
+on knowledge-heavy tasks (Search Engine Journal, 2026; USC/Wharton
+studies). The skill is a divergence tool, not an advisor.
 
 1. **Output is never advice.** Every provocation is framed as
    hypothesis, provocation, or "what if" — never as recommendation.

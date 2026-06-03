@@ -3,8 +3,8 @@
   "name": "crazy-professor-marketplace",
   "description": "Marketplace for the crazy-professor divergence generator plugin",
   "owner": {
-    "name": "willneverusegit",
-    "url": "https://github.com/willneverusegit"
+    "name": "dynamic-dome",
+    "url": "https://github.com/dynamic-dome"
   },
   "plugins": [
     {
@@ -13,7 +13,7 @@
       "category": "creativity",
       "source": {
         "source": "github",
-        "repo": "willneverusegit/crazy-professor",
+        "repo": "dynamic-dome/crazy-professor",
         "path": "."
       }
     }

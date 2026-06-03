@@ -146,7 +146,7 @@ ein neues Schema-Feld, einen neuen Hook, ein neues Time-Window, ein
 neues Frontmatter-Key einfuehrt, markiert das Main-Model die
 Provokation beim Output mit einem optischen Indikator — nicht zensieren,
 aber kenntlich machen. Konvention: der Anker-Satz bekommt am Anfang das
-Zeichen `[opt-care]` (yellow dot in telemetry).
+Zeichen `[opt-care]`.
 
 Beispielhafte Patterns, die das Zeichen ausloesen:
 - "Frontmatter-Pflichtfeld `nest_type:`"

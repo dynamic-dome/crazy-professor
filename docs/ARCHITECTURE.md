@@ -118,14 +118,14 @@ Persistenz ist ohne Telemetrie-Layer (in v0.13.0 zurueckgebaut). Field-Notes-Mar
 
 ## Sicherheit
 
-- **Persona-Drift-Risiko**: Persona-Prompting kann auf wissensschweren Tasks bis zu 30pp Genauigkeit kosten (Search Engine Journal 2024). Hard Rule "Output is never advice" + Warning-Banner im Output-Template adressieren das. Verbotenes Vokabular pro Archetype lebt als Prosa in den Prompt-Templates (Voice-Linter wurde in v0.13.0 zurueckgebaut, ist Soll-Vertrag im Prompt).
+- **Persona-Drift-Risiko**: Persona-Prompting kann auf wissensschweren Tasks mehrere Prozentpunkte Genauigkeit kosten (Search Engine Journal 2026; USC/Wharton). Hard Rule "Output is never advice" + Warning-Banner im Output-Template adressieren das. Verbotenes Vokabular pro Archetype lebt als Prosa in den Prompt-Templates (Voice-Linter wurde in v0.13.0 zurueckgebaut, ist Soll-Vertrag im Prompt).
 - **Adoption-Risiko**: Museum-Clause limitiert Adoption-ohne-Evidenz: nach 10 Runs ohne Keeper zieht der Skill sich selbst zurueck.
 - Keine Secrets im Repo. Keine Netzwerk-Calls aus dem Skill ausser ueber Codex-Subagent (Round-3) und das Standard-Claude-Code-LLM-API.
 
 ## Deployment
 
 - **Lokal nur**: Plugin in `~/.claude/plugins/` (oder `~/.claude/skills/<name>/` fuer Standalone-Form).
-- **Marketplace**: aktuell nicht im offiziellen Anthropic-Marketplace. Local-Install via `claude plugin install crazy-professor --scope user`. README beschreibt Marketplace-Variante mit `claude plugin marketplace add willneverusegit/crazy-professor`.
+- **Marketplace**: aktuell nicht im offiziellen Anthropic-Marketplace. Local-Install via `claude plugin install crazy-professor --scope user`. README beschreibt Marketplace-Variante mit `claude plugin marketplace add dynamic-dome/crazy-professor`.
 - **Update**: `claude plugin update crazy-professor`. Marketplace-Cache wird neu gezogen — Quelle muss als Tag/Release veroeffentlicht sein.
 - **Trigger**: Slash-Command `/crazy <topic> [--chat]` / `/crazy --lab` oder Trigger-Phrasen aus SKILL.md (deutsch + englisch).
 

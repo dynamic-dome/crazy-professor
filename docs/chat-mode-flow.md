@@ -6,7 +6,7 @@ created: 2026-04-23
 related_plan: docs/plans/2026-04-23-crazy-professor-v050-chat-mode-master-plan.md
 ---
 
-# Chat-Mode Flow Specification (v0.5.0)
+# Chat-Mode Flow Specification (v0.13.0)
 
 Diese Datei ist die autoritative Flow-Spezifikation fuer `--chat`. Alle
 Implementierungs-Phasen (2-7) referenzieren hier. Aenderungen an diesem

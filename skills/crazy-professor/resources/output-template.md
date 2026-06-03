@@ -61,7 +61,7 @@ observe, what counts as "this was worth trying">
 ## Notes on the template
 
 - The divergence warning is **not optional.** It is the safety framing
-  that lets the skill avoid the 30pp accuracy-degradation risk
+  that lets the skill avoid the accuracy-degradation risk
   documented for persona-prompting in knowledge-heavy tasks.
 - Adoption cost tags are a diagnostic label, not a recommendation:
   `low` (<= 30 min, no new infra), `medium` (1-2h, minor refactor),

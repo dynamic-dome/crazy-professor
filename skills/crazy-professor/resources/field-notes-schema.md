@@ -60,7 +60,7 @@ The Log table is the only machine-readable section. Columns are fixed:
 | `Timestamp` | ISO-8601 UTC | yes | Format: `YYYY-MM-DDTHH:MM:SSZ`. The picker writes the exact timestamp it used as seed. |
 | `Archetype` | string | yes | One of: `first-principles-jester`, `labyrinth-librarian`, `systems-alchemist`, `radagast-brown`, `all-4 (chat-mode)`. Suffix `(forced)` allowed when manually overridden. |
 | `Word` | string | yes | Single word or 1-3-token phrase from `provocation-words.txt`. For chat-mode: `multi (w1/w2/w3/w4)`. |
-| `Operator` | string | yes | One of: `reversal`, `exaggeration`, `escape`. For chat-mode: `multi (op1/op2/op3/op4)`. |
+| `Operator` | string | yes | One of: `reversal`, `exaggeration`, `escape`, `wishful-thinking`. For chat-mode: `multi (op1/op2/op3/op4)`. |
 | `Topic slug` | string | yes | Kebab-case slug of the topic, no spaces. Matches the output filename. |
 | `Output file` | string | yes | Filename relative to `.agent-memory/lab/crazy-professor/` (single) or with `chat/` prefix (chat). |
 | `Re-rolled` | enum | yes | One of: `no`, `archetype`, `word`, `both`, `intra-chat` (chat-mode internal duplicate), `forced-archetype`, `forced-archetype+word`, `n/a (pre-guard)` (only for pre-2026-04-22 rows). |
@@ -130,11 +130,12 @@ output files in `.agent-memory/lab/crazy-professor/` (single) and
 
 ## Initialization
 
-If `field-notes.md` does not exist when a run starts, the picker copies
-the contents of
-`<repo-root>/skills/crazy-professor/resources/field-notes-init.md` to
+If `field-notes.md` does not exist when a run starts, the picker writes
+an inline header (this schema's frontmatter + the empty Log table) to
 the target location, then proceeds with Step 2/2b on the (empty) Log
-table.
+table. No separate init template is shipped; the header lives in
+`picker.py`. (An optional `--init-template <path>` flag can still seed
+the file from an external template if one is supplied.)
 
 Initialization is idempotent: if the file already exists, the picker
 does nothing to it during init.
