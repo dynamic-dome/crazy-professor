@@ -14,7 +14,7 @@ Divergence-Generator als Claude-Code-Plugin: vier Archetypen produzieren strange
 
 ## Aktueller Stand
 
-v0.13.0 released 2026-05-02. Single-Run, Chat-Mode und statisches Lab-HTML aktiv. Master-Plan-Phasen 1-3 belassen, Phasen 4-8 zurückgebaut. Kein Voice-/Word-Pool-/Cross-Pollination-Linter, keine Telemetrie, kein Patch-Suggester, kein Run-Planner, kein Telegram-Scaffold, kein Browser-Playground. Skill-Kern: ein Python-Helper (`picker.py`), 4 Archetype-Templates, Single-Run + Chat-Mode-Distillation via Codex-Subagent. Anlass des Rückbaus: 18 Runs total in field-notes, 0 Telemetrie-Records, 0 Patch-Suggestions, 0 Telegram-Dialoge — Phase 4-8 wurde gebaut bevor Phase 1-3 einen Datenstrom produziert hatte. Versions-Policy in `docs/VERSIONING.md`.
+v0.14.0 released 2026-06-12. Single-Run (jetzt mit Wildness-Dial `--dial 0-100` und Pflicht-Sektion "Extracted Concepts"), Chat-Mode, statisches Lab-HTML und neuer Harvest-Modus (`--harvest`, Triage pending Runs → Verdikte → kept-Experimente ins TODO-System) aktiv. Basis bleibt der v0.13.0-Lean-Kern: ein Python-Helper (`picker.py`), 4 Archetype-Templates, Chat-Mode-Distillation via Codex-Subagent; Phase-4-8-Subsysteme bleiben zurückgebaut. Anlass für v0.14.0: Multi-Perspektiven-Analyse 2026-06-12 (`docs/reviews/`) — kept-Loop ohne Wiedervorlage tot, 60/40-Ziel nicht steuerbar, Movement-Schritt zwischen Provokation und Experiment fehlte. Versions-Policy in `docs/VERSIONING.md`.
 
 ## Kernfaehigkeiten
 
@@ -38,6 +38,8 @@ Kurzfassung:
 - [x] Phase 6: Cross-Pollination + Compact-Mode + 4. PO-Operator (✅ v0.11.0 → teilweise in v0.13.0 zurückgebaut, 4. Operator bleibt)
 - [x] Phase 7: Single-File-HTML-Playground (✅ v0.12.0 → in v0.13.0 zurückgebaut)
 - [x] v0.13.0 (2026-05-02): Phasen 4-8 zurückgebaut, Skill auf Kern reduziert
+- [x] v0.14.0 (2026-06-12): E1 Harvest-Modus + E2 Wildness-Dial + E3 Extracted Concepts (aus Multi-Perspektiven-Analyse)
+- [ ] E1-Bewährung: erste 2-3 Harvest-Läufe zeigen, ob der kept-Loop jetzt Daten produziert (Voraussetzung für alles Weitere, siehe Analyse E4-E10)
 
 ## Abhaengigkeiten
 

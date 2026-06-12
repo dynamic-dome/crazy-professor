@@ -108,13 +108,14 @@ Lab-Variante:
 
 | Speicher | Typ | Pfad | Inhalt |
 |----------|-----|------|--------|
-| Output-Files Single | Markdown | `.agent-memory/lab/crazy-professor/YYYY-MM-DD-HHMM-<topic-slug>.md` | Pro Single-Run: 10 Provokationen + Next-Experiment + Self-Flag-Checkboxes |
+| Output-Files Single | Markdown | `.agent-memory/lab/crazy-professor/YYYY-MM-DD-HHMM-<topic-slug>.md` | Pro Single-Run: 10 Provokationen + 3 Extracted Concepts + Next-Experiment + Self-Flag-Checkboxes |
 | Output-Files Chat | Markdown | `.agent-memory/lab/crazy-professor/chat/YYYY-MM-DD-HHMM-<topic-slug>.md` | Pro Chat-Run: 3 Runden + 20 Final-Ideen + Top-3 + Next-Experiment |
 | Field-Notes-Log | Markdown-Tabelle | `.agent-memory/lab/crazy-professor/field-notes.md` | Eine Row pro Run, Single + Chat gemischt |
+| Experiments-Backlog | Markdown | `.agent-memory/lab/crazy-professor/experiments-backlog.md` | Harvest-Fallback-Ziel fuer kept-Experimente (wenn kein DCO-/Wiki-TODO-System erreichbar) |
 | Provocation-Words-Pool | TXT | `skills/crazy-professor/resources/provocation-words.txt` | Aktive Wort-Liste, eine Zeile je Eintrag |
 | Retired-Words | TXT | `skills/crazy-professor/resources/retired-words.txt` | Schwarze Liste fuer 3-mal-monoton-geflaggt-Worte |
 
-Persistenz ist ohne Telemetrie-Layer (in v0.13.0 zurueckgebaut). Field-Notes-Markdown-Tabelle ist die einzige maschinenlesbare Run-Persistenz.
+Persistenz ist ohne Telemetrie-Layer (in v0.13.0 zurueckgebaut). Field-Notes-Markdown-Tabelle ist die einzige maschinenlesbare Run-Persistenz. Seit v0.14.0 fuellt der Harvest-Pfad (`/crazy --harvest`) die Review-Spalten der Field-Notes mit expliziten User-Verdikten (einzige sanktionierte Automation-Ausnahme, siehe field-notes-schema.md) und materialisiert kept-Experimente ausserhalb des Lab-Ordners — damit ist der Museum-Clause-/Field-Test-Loop erstmals mit Daten versorgbar.
 
 ## Sicherheit
 
@@ -127,7 +128,7 @@ Persistenz ist ohne Telemetrie-Layer (in v0.13.0 zurueckgebaut). Field-Notes-Mar
 - **Lokal nur**: Plugin in `~/.claude/plugins/` (oder `~/.claude/skills/<name>/` fuer Standalone-Form).
 - **Marketplace**: aktuell nicht im offiziellen Anthropic-Marketplace. Local-Install via `claude plugin install crazy-professor --scope user`. README beschreibt Marketplace-Variante mit `claude plugin marketplace add dynamic-dome/crazy-professor`.
 - **Update**: `claude plugin update crazy-professor`. Marketplace-Cache wird neu gezogen — Quelle muss als Tag/Release veroeffentlicht sein.
-- **Trigger**: Slash-Command `/crazy <topic> [--chat]` / `/crazy --lab` oder Trigger-Phrasen aus SKILL.md (deutsch + englisch).
+- **Trigger**: Slash-Command `/crazy <topic> [--chat] [--dial 0-100]` / `/crazy --lab` / `/crazy --harvest` oder Trigger-Phrasen aus SKILL.md (deutsch + englisch).
 
 ## Was in v0.13.0 entfernt wurde
 

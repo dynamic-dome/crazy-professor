@@ -4,25 +4,29 @@
 
 | Tool / Feature | Status | Seit | Beschreibung |
 |----------------|--------|------|--------------|
-| Single-Run-Mode | aktiv | 2026-04-22 | 1 Archetype, 10 Provokationen + 1 Next-Experiment, ~30s |
+| Single-Run-Mode | aktiv | 2026-04-22 | 1 Archetype, 10 Provokationen + 3 Extracted Concepts + 1 Next-Experiment, ~30s |
 | Chat-Mode (`--chat`) | aktiv | 2026-04-23 | 4 Archetypen, 3 Runden, 20 destillierte Ideen, ~10 LLM-Calls |
 | Lab (`--lab`) | aktiv | 2026-04-30 | Standalone Browser für Output-Triage, paste-only, kein LLM-Call |
+| Wildness-Dial (`--dial 0-100`) | aktiv | 2026-06-12 | Soll-Mischung wild/tame über die Cost-Tags (Default 60 → 6 wild / 4 tame) + dial-gewichteter Operator-Pick. Hard Rule 7: Tags bleiben ehrlich, Abweichung >±1 wird diagnostiziert. |
+| Extracted Concepts | aktiv | 2026-06-12 | de Bonos Movement-Schritt: 3 Mechanismus-Konzepte pro Single-Run, je 2-3 verankerte Pfade. Hard Rule 8: Substantiv-Phrasen, keine Imperativform, kein Ranking. |
+| Harvest-Modus (`--harvest`) | aktiv | 2026-06-12 | Triage-Dialog über pending field-notes-Zeilen, Verdikte vom User, kept-Experimente landen im TODO-System (DCO/Wiki) oder `experiments-backlog.md`. Schliesst den Museum-Clause-/Field-Test-Loop. |
 | Variation-Guard | aktiv | 2026-04-22 | Anti-Streak-Logik in `picker.py` (Archetype-Streak ≥3, Wort-Window 10) |
 | Field-Notes-Log | aktiv | 2026-04-22 | Markdown-Tabelle in `.agent-memory/lab/crazy-professor/field-notes.md` |
-| Museum-Clause | aktiv | 2026-04-22 | Skill zieht sich nach 10 Runs ohne Keeper selbst zurueck |
+| Museum-Clause | aktiv | 2026-04-22 | Skill zieht sich nach 10 Runs ohne Keeper selbst zurueck; Zaehlerstand-Report im Harvest seit v0.14.0 |
 | Codex-Round-3-Distiller | aktiv | 2026-04-23 | `codex:codex-rescue` als Round-3-Juror in Chat-Mode |
 | Claude-Distiller-Fallback | aktiv | 2026-04-23 | Falls Codex nicht erreichbar |
-| Picker-Skript | aktiv | 2026-04-27 | `picker.py` (stdlib-only): mod-4 archetype, mod-4 operator, microsecond-seeded word, JSON-Output. Force-Flags + wishful-share v0.13.0 entfernt. |
+| Picker-Skript | aktiv | 2026-04-27 | `picker.py` (stdlib-only): mod-4 archetype, dial-gewichteter operator, microsecond-seeded word, JSON-Output mit `dial` + `cost_mix_target`. Force-Flags + wishful-share v0.13.0 entfernt. |
 | Output-Template + Field-Notes-Schema | aktiv | 2026-04-27 | Marker-Pattern + Tabellen-Spec, Format ist Soll-Vertrag im Prompt (kein Linter mehr) |
 
 Status-Werte: `aktiv`, `experimentell`, `geplant`, `out of scope`, `deprecated`, `entfernt`
 
 ## Profile / Modi
 
-- **Single-Run** (default): 1 Archetype-Pick via mod-4 + Variation-Guard, 10 Provokationen, 1 Next-Experiment.
-- **Chat-Mode** (`--chat`): alle 4 Archetypen parallel in Runde 1 (5 Provokationen je), Cross-Pollination in Runde 2 (counter/extend), Codex-Distillation in Runde 3 (5 Final-Ideen je Archetype = 20 total).
+- **Single-Run** (default): 1 Archetype-Pick via mod-4 + Variation-Guard, 10 Provokationen, 3 Extracted Concepts, 1 Next-Experiment. Optional `--dial 0-100` fuer die wild/tame-Mischung.
+- **Chat-Mode** (`--chat`): alle 4 Archetypen parallel in Runde 1 (5 Provokationen je), Cross-Pollination in Runde 2 (counter/extend), Codex-Distillation in Runde 3 (5 Final-Ideen je Archetype = 20 total). `--dial` wird durchgereicht, constraint die Runden aber nicht.
 - **Chat-Mode Dry-Run** (`--chat --dry-run-round1`): nur Runde 1, kein Round-2/3, fuer internes Testen.
 - **Lab** (`--lab`): standalone Browser, paste-only, kein LLM-Call.
+- **Harvest** (`--harvest`): standalone Triage-Dialog, keine Generierung, kein Picker-Call. Pending Runs reviewen, Verdikte protokollieren, kept-Experimente materialisieren.
 
 ## MCP-Server
 

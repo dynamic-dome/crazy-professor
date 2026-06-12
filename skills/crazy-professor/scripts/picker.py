@@ -15,6 +15,15 @@ Modes:
 Options:
     --init-template <path>    if field-notes file is missing, copy this template there first
     --force-timestamp <iso>   override UTC timestamp (testing only)
+    --dial <0-100>            wildness dial (default 60). Maps to a target
+                              cost-tag mix for the 10 provocations
+                              (dial 60 -> 6 wild [high/system-break],
+                              4 tame [low/medium]) and weights the
+                              operator pick (high dial favors
+                              exaggeration/escape, low dial favors
+                              reversal/wishful-thinking). Single-run
+                              only; in chat mode the dial is echoed in
+                              the JSON but carries no cost_mix_target.
 
 Exit codes:
     0  success — JSON written to stdout
@@ -47,6 +56,14 @@ ARCHETYPES = (
     "radagast-brown",
 )
 OPERATORS = ("reversal", "exaggeration", "escape", "wishful-thinking")
+# Dial-weighted operator lists (v0.14.0). High dial leans into the two
+# operators that push hardest sideways (exaggeration/escape); low dial
+# leans into the two gentler movements (reversal/wishful-thinking).
+OPERATORS_WILD = ("exaggeration", "escape", "exaggeration", "escape",
+                  "reversal", "wishful-thinking")
+OPERATORS_TAME = ("reversal", "wishful-thinking", "reversal",
+                  "wishful-thinking", "exaggeration", "escape")
+DIAL_DEFAULT = 60
 LOG_TABLE_HEADER_RE = re.compile(r"^\|\s*#\s*\|\s*Timestamp", re.IGNORECASE)
 LOG_TABLE_ROW_RE = re.compile(r"^\|\s*\d+\s*\|")
 
@@ -99,15 +116,45 @@ def normalize_archetype(raw: str) -> str:
     return raw
 
 
-def picker_seed(ts: dt.datetime, offset_seconds: int = 0) -> tuple[str, str, str]:
+def operator_pool(dial: int) -> tuple[str, ...]:
+    """Return the operator list the seed indexes into, weighted by dial.
+
+    dial >= 75 -> OPERATORS_WILD (exaggeration/escape twice as likely)
+    dial <= 25 -> OPERATORS_TAME (reversal/wishful-thinking twice as likely)
+    else       -> OPERATORS (equal weights, pre-v0.14.0 behavior)
+    """
+    if dial >= 75:
+        return OPERATORS_WILD
+    if dial <= 25:
+        return OPERATORS_TAME
+    return OPERATORS
+
+
+def cost_mix_target(dial: int) -> dict:
+    """Map the dial to a target cost-tag mix over 10 provocations.
+
+    wild = cost high|system-break, tame = cost low|medium.
+    dial 60 -> {"wild": 6, "tame": 4}. Tags stay honest per provocation;
+    the mix is a generation target with +/-1 tolerance (see hard-rules).
+    """
+    wild = round(dial / 10)
+    wild = max(0, min(10, wild))
+    return {"wild": wild, "tame": 10 - wild}
+
+
+def picker_seed(
+    ts: dt.datetime, offset_seconds: int = 0, dial: int = DIAL_DEFAULT
+) -> tuple[str, str, str]:
     """Deterministic mod-based picker for archetype/operator (and timestamp ISO).
 
     Archetype: minute mod 4
-    Operator:  second mod 4 (gleichverteilt über 4 Operatoren since v0.13.0)
+    Operator:  second mod len(pool); pool is dial-weighted since v0.14.0
+               (equal 4-operator distribution at default mid-range dial)
     """
     seed_ts = ts + dt.timedelta(seconds=offset_seconds)
     archetype = ARCHETYPES[seed_ts.minute % 4]
-    operator = OPERATORS[seed_ts.second % 4]
+    pool = operator_pool(dial)
+    operator = pool[seed_ts.second % len(pool)]
     return archetype, operator, seed_ts.isoformat().replace("+00:00", "Z")
 
 
@@ -149,8 +196,10 @@ def pick_word(available_words: list[str], seed_ts: dt.datetime, offset: int = 0)
     return available_words[idx]
 
 
-def pick_single(words: list[str], rows: list[dict], ts: dt.datetime) -> dict:
-    archetype, operator, ts_iso = picker_seed(ts)
+def pick_single(
+    words: list[str], rows: list[dict], ts: dt.datetime, dial: int = DIAL_DEFAULT
+) -> dict:
+    archetype, operator, ts_iso = picker_seed(ts, dial=dial)
     word = pick_word(words, ts)
     archetype, word, re_rolled = variation_guard(archetype, word, rows, words, ts)
     return {
@@ -160,11 +209,15 @@ def pick_single(words: list[str], rows: list[dict], ts: dt.datetime) -> dict:
         "word": word,
         "operator": operator,
         "re_rolled": re_rolled,
+        "dial": dial,
+        "cost_mix_target": cost_mix_target(dial),
         "field_notes_rows_read": len(rows),
     }
 
 
-def pick_chat(words: list[str], rows: list[dict], ts: dt.datetime) -> dict:
+def pick_chat(
+    words: list[str], rows: list[dict], ts: dt.datetime, dial: int = DIAL_DEFAULT
+) -> dict:
     """Four picks, one per archetype. Word-guard runs across the chat-run."""
     chat_rolled = []
     chat_words: set[str] = set()
@@ -205,6 +258,7 @@ def pick_chat(words: list[str], rows: list[dict], ts: dt.datetime) -> dict:
         "mode": "chat",
         "picks": picks,
         "re_rolled_aggregate": aggregate,
+        "dial": dial,
         "field_notes_rows_read": len(rows),
     }
 
@@ -218,7 +272,15 @@ def main() -> int:
     p.add_argument("--init-template", type=Path,
                    help="copy this file to --field-notes if missing")
     p.add_argument("--force-timestamp", help="ISO-8601 UTC override (testing)")
+    p.add_argument("--dial", type=int, default=DIAL_DEFAULT,
+                   help="wildness dial 0-100 (default 60); maps to a "
+                        "cost-tag mix target and operator weighting "
+                        "(single-run only)")
     args = p.parse_args()
+
+    if not 0 <= args.dial <= 100:
+        print(f"error: --dial must be 0-100, got {args.dial}", file=sys.stderr)
+        return 1
 
     # Initialization
     if not args.field_notes.exists():
@@ -248,9 +310,9 @@ def main() -> int:
     rows = read_last_log_rows(args.field_notes, n=10)
 
     if args.mode == "single":
-        result = pick_single(words, rows, ts)
+        result = pick_single(words, rows, ts, dial=args.dial)
     else:
-        result = pick_chat(words, rows, ts)
+        result = pick_chat(words, rows, ts, dial=args.dial)
 
     json.dump(result, sys.stdout, ensure_ascii=False)
     sys.stdout.write("\n")

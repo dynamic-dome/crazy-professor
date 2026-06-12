@@ -1,6 +1,6 @@
 ---
 title: crazy-professor — Operating Instructions
-status: v0.13.0 (Phase 4-8 zurückgebaut)
+status: v0.14.0 (E1 Harvest, E2 Dial, E3 Extracted Concepts)
 load_when: any invocation, after parsing the trigger
 path_convention: all paths are relative to plugin repo root <repo-root> = crazy-professor/
 ---
@@ -9,8 +9,9 @@ path_convention: all paths are relative to plugin repo root <repo-root> = crazy-
 
 Claude follows these steps on every invocation. Steps 1-5 cover the
 default single-run path; Steps C1-C6 cover Chat-Mode (`--chat`); Step
-L1 covers `--lab`. All file paths are relative to the plugin repo root
-(`<repo-root>` = `crazy-professor/`).
+L1 covers `--lab`; Steps H1-H4 cover Harvest (`--harvest`). All file
+paths are relative to the plugin repo root (`<repo-root>` =
+`crazy-professor/`).
 
 ## Single-Run Path
 
@@ -18,6 +19,15 @@ L1 covers `--lab`. All file paths are relative to the plugin repo root
 
 - If `$ARGUMENTS` contains `--lab`: jump to Step L1 (no topic parsing,
   no generation).
+- If `$ARGUMENTS` contains `--harvest`: jump to Step H1 (no topic
+  parsing, no generation). `--harvest` is standalone; combined with
+  `--chat` or a topic, reject with:
+  `--harvest is standalone. Run /crazy --harvest on its own.`
+- If `$ARGUMENTS` contains `--dial <n>`: parse n as integer 0-100
+  (reject anything else with a one-line error). Default when absent:
+  60. With `--chat`, the dial is accepted but only echoed into the
+  picker JSON — it does not constrain chat-round generation (note this
+  in the run summary if the user passed it explicitly).
 - **Single-run with topic:** proceed.
 - **Single-run without topic:** use the most recent concrete task,
   plan, or problem from the current conversation as topic. If the
@@ -36,17 +46,22 @@ python <repo-root>/skills/crazy-professor/scripts/picker.py \
   --field-notes <target-project>/.agent-memory/lab/crazy-professor/field-notes.md \
   --words <repo-root>/skills/crazy-professor/resources/provocation-words.txt \
   --retired <repo-root>/skills/crazy-professor/resources/retired-words.txt \
-  --mode single
+  --mode single --dial <dial>
 ```
 
 Parses one JSON object from stdout: `archetype`, `word`, `operator`,
-`re_rolled`, `timestamp`. The variation-guard (3-archetype-streak
-re-roll, 10-row word-window dedup) is applied inside the script.
+`re_rolled`, `timestamp`, `dial`, `cost_mix_target` (`{"wild": w,
+"tame": t}` — wild = cost `high`/`system-break`, tame = `low`/`medium`).
+The variation-guard (3-archetype-streak re-roll, 10-row word-window
+dedup) is applied inside the script. The dial also weights the operator
+pick (≥75 favors exaggeration/escape, ≤25 favors
+reversal/wishful-thinking, mid-range stays equal).
 
 If Python is unavailable, use the prose fallback documented in the
 `picker.py` module docstring: `archetype = ARCHETYPES[utc_minute % 4]`,
 `operator = OPERATORS[utc_second % 4]`, random word from the active
-pool minus retired, then variation-guard manually.
+pool minus retired, then variation-guard manually; `cost_mix_target` =
+`wild: round(dial/10)`, `tame: 10 - wild`.
 
 **Step 3: Load the archetype's prompt template.** Read the matching
 `<repo-root>/skills/crazy-professor/prompt-templates/<archetype>.md`
@@ -59,14 +74,31 @@ per line:
 
 `<provocation text> -- [cost: <level>] -- anchor: <link>`
 
-The cost tag is honest per provocation. No forced distribution. Pick
-ONE of the 10 as the next experiment — the one most testable in under
+The cost tag is honest per provocation — but generation AIMS at the
+`cost_mix_target` from Step 2 (Hard Rule 7, Cost-Mix Corridor): out of
+10 provocations, ~`wild` should honestly land at `high`/`system-break`
+and ~`tame` at `low`/`medium`. Self-check after drafting: count the
+honest tags. If the count deviates from the target by more than ±1,
+add the one-line cost-mix diagnosis from the output template below the
+provocation list. Never re-label a tag to hit the target.
+
+**Step 4b: Extract 3 concepts (Hard Rule 8).** Distill the 10
+provocations into exactly 3 transferable mechanism-concepts — de
+Bono's movement step. Each concept: a noun phrase, ≥1 source
+provocation cited by number, one mechanism sentence (no imperative
+form), and 2-3 anchored realization paths at honest cost levels.
+Concepts open options; they do not rank or recommend.
+
+**Step 4c: Pick ONE next experiment.** Preferred source: a concept
+path from Step 4b (paths are already sized); direct pick from a
+provocation remains allowed. Criterion unchanged: testable in under
 one hour with tools the user already has.
 
 Write the output file using the frontmatter and body structure
 defined in
-`<repo-root>/skills/crazy-professor/resources/output-template.md`,
-to path
+`<repo-root>/skills/crazy-professor/resources/output-template.md`
+(provocations → cost-mix line if due → Extracted Concepts → Next
+Experiment → Self-Flag), to path
 `<target-project>/.agent-memory/lab/crazy-professor/YYYY-MM-DD-HHMM-<topic-slug>.md`.
 Create the directory if it does not exist.
 
@@ -146,3 +178,61 @@ file write, no field-notes row, no telemetry. Done.
 The lab is paste-only: the user pastes an existing crazy-professor
 output, scores ideas, copies one experiment card. Browser-side
 JavaScript only.
+
+## Harvest Path (`--harvest`, standalone)
+
+Closes the kept-loop: turns `pending` review columns into user
+verdicts and lands kept experiments outside the lab folder. Binding
+rules in `<repo-root>/skills/crazy-professor/references/hard-rules.md`
+("Harvest Rules"). No LLM generation, no picker call, no new output
+file.
+
+**Step H1: Collect pending runs.** Read
+`<target-project>/.agent-memory/lab/crazy-professor/field-notes.md`.
+Select Log rows where `Kept` or `Review1-Votum` is `pending`. If none:
+report `Nothing to harvest — all runs reviewed.` and stop. If more
+than 5 are pending, take the 5 OLDEST first (announce how many remain).
+
+**Step H2: Triage dialog.** For each selected run, read its output
+file and present a compact card: topic, archetype × word × operator,
+the Next Experiment paragraph, and the experiment's source provocation
+(plus one further provocation if the experiment came from a concept).
+Then ask for ONE verdict per run — `kept`, `conditional`, `backlog`,
+or `discarded` — plus two optional flags: `retire-word` (output felt
+like a near-variation of earlier runs) and `voice-off` (archetype
+sounded wrong). Batch the questions (one AskUserQuestion per run, or
+one combined prompt for ≤3 runs). A run the user skips stays
+`pending` — never infer a verdict.
+
+**Step H3: Record verdicts.** Update the harvested rows in
+field-notes.md (this is the sanctioned exception to the
+automation-never-edits-review-columns rule — the agent records, the
+user judged). Mapping:
+
+| Verdict | Kept | Review1-Votum |
+|---|---|---|
+| kept | `yes` | `kept` |
+| conditional | `pending` (until the named artefact lands) | `conditional` |
+| backlog | `no` | `backlog` |
+| discarded | `no` | `discarded` |
+
+`retire-word` flag → `Retire-word: yes`, else `no`. `voice-off` flag →
+short description string, else `no`. After writing, check the
+Field-Test-Rule (any word now at 3 retire-flags → move it to
+`retired-words.txt`) and the Museum-Clause counter (≥10 runs reviewed
+→ report the kept-count against the 3-of-10 gate; the verdict on the
+skill itself belongs to the user).
+
+**Step H4: Land kept experiments.** For every `kept` run, materialize
+its Next Experiment outside the lab folder, in this order of
+preference: (a) the user's TODO system if available in the environment
+(e.g. DCO `tools/add_todo.py` wrapper — announce "→ DCO #NNNN
+angelegt"; or a `wiki/wiki/todos/` folder per its README schema);
+(b) fallback: append a dated entry to
+`<target-project>/.agent-memory/lab/crazy-professor/experiments-backlog.md`
+(create with a `# Experiments Backlog` header if missing — one section
+per experiment: date, topic, source run file, the experiment
+paragraph). Announce every destination in the chat. `conditional`
+verdicts get a 14-day deadline note in the same entry instead of a
+TODO. End with a one-line harvest summary: N reviewed, counts per
+verdict, destinations.

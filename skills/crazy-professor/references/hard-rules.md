@@ -1,6 +1,6 @@
 ---
 title: crazy-professor — Hard Rules
-status: v0.13.0 (Phase 4-8 zurückgebaut, Inhalte konsolidiert)
+status: v0.14.0 (E1 Harvest, E2 Dial, E3 Extracted Concepts)
 load_when: any invocation, before generation
 path_convention: all paths are relative to plugin repo root <repo-root> = crazy-professor/
 ---
@@ -28,6 +28,23 @@ studies). The skill is a divergence tool, not an advisor.
 6. **No cross-archetype contamination.** Each archetype has a
    verbotenes Vokabular block in its prompt template. Honor those bans
    as prose rules — there is no automated linter as of v0.13.0.
+7. **Cost-Mix Corridor (dial, since v0.14.0).** The dial (0-100,
+   default 60) sets a target mix over the 10 provocations: `wild` =
+   `high`/`system-break`, `tame` = `low`/`medium`; dial 60 → 6 wild /
+   4 tame. The mix steers GENERATION — it never bends an individual
+   tag. Tags stay honest per provocation. If the honest distribution
+   deviates from the target by more than ±1, the output carries a
+   mandatory one-line cost-mix diagnosis (e.g. "topic produced only
+   heavyweights — probably framed too abstractly"). Faking tags to hit
+   the target is the one forbidden move.
+8. **Extracted Concepts are movement material, not advice (since
+   v0.14.0).** Exactly 3 concepts per single-run, each a noun phrase
+   naming a transferable mechanism, each citing ≥1 source provocation
+   by number, each with 2-3 anchored paths at honest cost levels.
+   No imperative form anywhere in the section — "do X" / "führe Y ein"
+   is advisor-drift and must be rewritten. Concepts open options; they
+   never rank provocations and never crown a winner. The divergence
+   banner covers this section.
 
 ## Museum Clause (hard gate)
 
@@ -77,6 +94,28 @@ vocabulary rule, no foreign-field smuggling, optimization-under-care
 flagging, anti-folder-sprawl limit) live as the "Activation
 Amendments" prose section at the bottom of
 `<repo-root>/skills/crazy-professor/prompt-templates/radagast-brown.md`.
+
+## Harvest Rules (`--harvest`, since v0.14.0)
+
+The harvest path is the only sanctioned way for automation to fill the
+review columns (`Kept`, `Retire-word`, `Voice-off`, `Review1-Votum`) in
+field-notes.md — and only as a RECORDER of explicit user verdicts given
+during the triage dialog. Three bindings:
+
+1. **No invented verdicts.** The agent presents pending runs and asks;
+   it never infers a verdict from silence, file age, or its own
+   judgment of quality. A run the user skips stays `pending`.
+2. **Kept needs a destination.** A `kept` verdict materializes the
+   run's Next Experiment outside the lab folder: into the user's TODO
+   system when one is available in the environment (e.g. a DCO
+   `tools/add_todo.py` wrapper, or `wiki/wiki/todos/`), otherwise into
+   `.agent-memory/lab/crazy-professor/experiments-backlog.md`. Announce
+   the destination in the chat. A kept without a landed artefact does
+   not count toward the Museum-Clause quorum.
+3. **Harvest feeds, never judges.** Museum-Clause and Field-Test-Rule
+   still fire on the recorded data — harvest only makes sure the data
+   exists. The agent must not argue for or against retiring the skill
+   during a harvest.
 
 ## Review Rubric
 

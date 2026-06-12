@@ -4,7 +4,7 @@ A Claude Code plugin that delivers a divergence generator for creative ideation.
 
 Four active voices -- **first-principles-jester**, **labyrinth-librarian**, **systems-alchemist**, and **radagast-brown** -- produce strange but anchored provocations. Never advice. Each default run combines an archetype, a provocation word, and a PO operator (De Bono's Provocation Operation) to deliberately nudge your thinking away from the obvious.
 
-Default mode returns 10 provocations from one voice. `--chat` mode runs all four voices through a 3-round flow and distills a final 20-idea list.
+Default mode returns 10 provocations from one voice, plus 3 extracted mechanism-concepts (de Bono's movement step) and exactly one next experiment. `--dial 0-100` (default 60) tunes the wild/tame cost mix. `--chat` mode runs all four voices through a 3-round flow and distills a final 20-idea list. `--harvest` triages pending runs and lands kept experiments in your TODO system.
 
 ## Use when
 
@@ -35,11 +35,13 @@ Marketplace installs are cached under Claude Code's plugin cache. Source-repo ch
 
 ```text
 /crazy <topic>
+/crazy <topic> --dial 80
 /crazy <topic> --chat
 /crazy --lab
+/crazy --harvest
 ```
 
-Runs the divergence generator on `<topic>`. Add `--chat` when the topic needs all four voices and a curated 20-idea output.
+Runs the divergence generator on `<topic>`. Add `--dial 0-100` to tune how wild the cost mix should be (default 60 → 6 wild / 4 tame). Add `--chat` when the topic needs all four voices and a curated 20-idea output. Run `--harvest` periodically to review pending runs — verdicts feed the museum-clause and kept experiments land in your TODO system.
 
 **Topic resolution:**
 
@@ -60,11 +62,13 @@ Runs the divergence generator on `<topic>`. Add `--chat` when the topic needs al
 
 ## Status
 
-v0.13.0 active (released 2026-05-02). Default single-run, Chat-Mode and the
-static Lab (`/crazy --lab`) are the only user-facing surfaces. Phase 4-8 was
-rolled back on 2026-05-02 (telemetry, voice/word-pool/cross-pollination
-linters, eval-suite, run-planner, patch-suggester, browser playground,
-telegram-dialogue scaffold, ideation-lab v2 design — all removed). See
-`docs/CHANGELOG.md` v0.13.0 entry for the rationale and full file list.
+v0.14.0 active (released 2026-06-12). User-facing surfaces: single-run
+(with `--dial` and Extracted Concepts), Chat-Mode, the static Lab
+(`/crazy --lab`), and the Harvest mode (`/crazy --harvest`). The v0.13.0
+lean core is unchanged: Phase 4-8 stays rolled back (telemetry,
+voice/word-pool/cross-pollination linters, eval-suite, run-planner,
+patch-suggester, browser playground, telegram-dialogue scaffold,
+ideation-lab v2 design). See `docs/CHANGELOG.md` for the v0.14.0 and
+v0.13.0 entries.
 
 Local-only.

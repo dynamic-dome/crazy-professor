@@ -4,6 +4,20 @@ Neueste Eintraege oben. Format: `## [vX.Y.Z] [YYYY-MM-DD] Kurztitel` für Versio
 
 ---
 
+## [v0.14.0] [2026-06-12] Dial + Extracted Concepts + Harvest (E1-E3)
+
+**Versions-Bump-Begründung (per VERSIONING.md):** MINOR-Bump weil zwei neue User-Flags (`--dial`, `--harvest`) hinzukommen und die Single-Run-Output-Struktur sich ändert (neue Pflicht-Sektion "Extracted Concepts", neues Frontmatter-Feld `dial`).
+
+**Anlass:** Multi-Perspektiven-Analyse `docs/reviews/2026-06-12-fable-multi-perspektiven-analyse.md` (Anwender/Agents/Ideenfindung). Drei Befunde: (1) der kept-Loop verhungert, weil kein Wiedervorlage-Mechanismus existiert; (2) das 60/40-Ziel (verrückt/machbar) ist nirgends kodiert oder steuerbar; (3) zwischen Provokation und Experiment fehlt de Bonos Movement-Schritt — 9 von 10 Provokationen verpuffen ohne Verwertungspfad.
+
+- **E2 — Wildness-Dial (`--dial 0-100`, default 60):** `picker.py` bekommt `--dial`; das JSON liefert neu `dial` + `cost_mix_target` (`wild` = high/system-break, `tame` = low/medium; Dial 60 → 6/4). Operator-Pick ist dial-gewichtet (≥75 favorisiert exaggeration/escape, ≤25 reversal/wishful-thinking, Mittelfeld bleibt gleichverteilt — Default-Verhalten unverändert). Neue Hard Rule 7 "Cost-Mix Corridor": Tags bleiben ehrlich pro Provokation, die Mischung ist Generierungs-Ziel mit ±1-Toleranz; bei größerer Abweichung Pflicht-Diagnosezeile im Output. Tag-Schummeln zum Ziel-Erreichen ist der eine verbotene Move. In Chat-Mode wird der Dial nur ins JSON durchgereicht (kein Runden-Constraint).
+- **E3 — Extracted Concepts (Step 4b, Hard Rule 8):** Jeder Single-Run destilliert die 10 Provokationen in exakt 3 übertragbare Mechanismus-Konzepte (Substantiv-Phrase, ≥1 Quell-Provokation per Nummer, Mechanismus-Satz ohne Imperativform, 2-3 verankerte Realisierungspfade mit ehrlichen Cost-Levels). Das Next-Experiment wird bevorzugt aus einem Konzept-Pfad gewählt (Step 4c). Konzepte sind Movement-Material, kein Ratschlag — Divergence-Banner gilt mit, kein Ranking, keine Kür.
+- **E1 — Harvest-Modus (`/crazy --harvest`, Steps H1-H4):** Standalone-Triage-Dialog über pending field-notes-Zeilen (max. 5 älteste pro Lauf). Verdikte `kept`/`conditional`/`backlog`/`discarded` + optionale Flags `retire-word`/`voice-off` — ausschließlich vom User, nie inferiert. Harvest ist die einzige sanktionierte Ausnahme der Automation-edits-keine-Review-Spalten-Regel (Schema-Update + neue "Harvest Rules"-Sektion in hard-rules.md). `kept`-Experimente landen im TODO-System des Users (DCO `add_todo.py` / `wiki/wiki/todos/`) oder im Fallback `experiments-backlog.md`. Nach dem Schreiben: Field-Test-Rule-Check (3 retire-Flags → Wort pensionieren) + Museum-Clause-Zählerstand-Report. Neuer Review1-Votum-Wert `discarded` im Schema.
+- Versions-Bump auf 0.14.0 in 8 Files (plugin.json, SKILL.md, output-template, chat-output-template, chat-mode-flow ×2, chat-curator, chat-round-1/2-wrapper). Tote Linter-Referenz in output-template.md korrigiert (Drive-by).
+- Smoke-Tests `picker.py`: Default-Dial 60 reproduziert v0.13.0-Operator-Verhalten; Dial 0/10/60/90/100 liefern korrekte cost_mix_targets und Operator-Pools; Dial 150 → Exit 1; Chat-Mode echo't den Dial ohne cost_mix_target.
+
+---
+
 ## [v0.13.0] [2026-05-02] Rückbau auf Single-Run + Chat-Mode + Lab
 
 **Versions-Bump-Begründung (per VERSIONING.md):** MINOR-Bump weil die User-Flag-Surface schrumpft (`--playground`, `--from-session`, `--dry-run`, `--compact`, `--strict-cross-pollination` entfernt) und ~3000 Zeilen Tooling stillgelegt werden. Skill-Kern (4 Archetypen, Picker, Chat-Mode-Distillation) bleibt unverändert.

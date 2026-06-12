@@ -67,7 +67,7 @@ The Log table is the only machine-readable section. Columns are fixed:
 | `Kept` | enum | yes | `pending`, `yes`, `no`. Default `pending` until 14-day artefact-tracking resolves. |
 | `Retire-word` | enum | yes | `pending`, `yes`, `no`. Set `yes` when the user flagged the run as "too close to variations of previous outputs". |
 | `Voice-off` | enum / free | yes | `pending`, `no`, or a short string describing the drift (e.g. `light-voice-drift (juror-2 #8 System-Verstoss)`). |
-| `Review1-Votum` | enum / free | yes | One of: `pending`, `kept`, `conditional`, `backlog`. May carry a parenthetical (e.g. `kept (2 of 3 voters)`). |
+| `Review1-Votum` | enum / free | yes | One of: `pending`, `kept`, `conditional`, `backlog`, `discarded` (since v0.14.0, harvest verdict). May carry a parenthetical (e.g. `kept (2 of 3 voters)`). |
 
 ### Markdown table format
 
@@ -80,7 +80,11 @@ a value would, escape it as `\|` or replace with `/`.
 The picker (and the SKILL.md operating instructions) only ever **append**
 rows to the Log table. Existing rows are never edited by automation. The
 user may edit `Kept`, `Retire-word`, `Voice-off`, `Review1-Votum`
-manually after a review.
+manually after a review. **One exception (since v0.14.0):** the harvest
+path (`/crazy --harvest`, Steps H1-H4) may update exactly these four
+review columns on existing rows — but only as a recorder of explicit
+user verdicts given in the triage dialog, never from its own judgment.
+All other cells stay untouchable.
 
 ## Status Block
 
@@ -124,7 +128,10 @@ output files in `.agent-memory/lab/crazy-professor/` (single) and
 
 - Reorder or delete existing rows (audit trail).
 - Edit user-facing review columns (`Kept`, `Retire-word`, `Voice-off`,
-  `Review1-Votum`) — those are user input.
+  `Review1-Votum`) — those are user input. Sole exception: the harvest
+  path records explicit user verdicts into these columns (see "Append
+  rule" above and hard-rules.md "Harvest Rules"); it never invents
+  them.
 - Truncate or rotate the file. Field-notes is append-only; archival is
   manual at museum-clause checkpoints if it ever becomes too long.
 
