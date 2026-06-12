@@ -2,6 +2,8 @@
 
 A Claude Code plugin that delivers a divergence generator for creative ideation.
 
+> Vollständiger Wegweiser (Workflow, Komponenten, Troubleshooting): [HOW-TO-USE.md](HOW-TO-USE.md)
+
 Four active voices -- **first-principles-jester**, **labyrinth-librarian**, **systems-alchemist**, and **radagast-brown** -- produce strange but anchored provocations. Never advice. Each default run combines an archetype, a provocation word, and a PO operator (De Bono's Provocation Operation) to deliberately nudge your thinking away from the obvious.
 
 Default mode returns 10 provocations from one voice, plus 3 extracted mechanism-concepts (de Bono's movement step) and exactly one next experiment. `--dial 0-100` (default 60) tunes the wild/tame cost mix. `--chat` mode runs all four voices through a 3-round flow and distills a final 20-idea list. `--harvest` triages pending runs and lands kept experiments in your TODO system.
