@@ -21,9 +21,10 @@ v0.14.0 released 2026-06-12. Single-Run (jetzt mit Wildness-Dial `--dial 0-100` 
 Siehe [CAPABILITIES.md](CAPABILITIES.md) fuer die vollstaendige Liste.
 
 Kurzfassung:
-- Single-Run: 1 Archetype, 10 Provokationen, 1 Next-Experiment, ~30s
+- Single-Run: 1 Archetype, 10 Provokationen + 3 Extracted Concepts, 1 Next-Experiment, ~30s; `--dial 0-100` steuert die wild/tame-Mischung
 - Chat-Mode (`--chat`): alle 4 Archetypen, 3 Runden, 20 destillierte Ideen, 2-4 min
 - Lab (`--lab`): statisches HTML zum Reviewen gepasteter Outputs, kein LLM-Call
+- Harvest (`--harvest`): Triage pending Runs, Verdikte in field-notes, kept-Experimente ins TODO-System
 - Variation-Guard: Anti-Streak-Logik gegen Archetype-/Wort-Wiederholungen
 - Field-Notes-Log: jeder Run wird in `.agent-memory/lab/crazy-professor/field-notes.md` protokolliert
 - Museum-Clause: Skill zieht sich nach 10 Runs ohne Keeper selbst zurueck

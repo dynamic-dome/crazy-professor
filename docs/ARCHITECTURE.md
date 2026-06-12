@@ -88,7 +88,7 @@ User Prompt / "crazy professor" / /crazy <topic>
 
 1. User triggert `/crazy <topic>` oder Trigger-Phrase ("crazy professor", "verrueckter professor", ...).
 2. Slash-Command parst `$ARGUMENTS`, dispatched. Bei leerem Topic in Single-Run: Letzten Konversations-Kontext nehmen. Bei `--chat` ohne Topic: Reject.
-3. SKILL.md ruft Picker-Skript auf (Archetype mod-4 aus UTC-Minute, Operator mod-4 aus UTC-Sekunde, Wort microsecond-seeded aus aktivem Pool minus retired).
+3. SKILL.md ruft Picker-Skript auf (Archetype mod-4 aus UTC-Minute; Operator aus UTC-Sekunde gegen einen dial-gewichteten Pool — Dial ≥75 favorisiert exaggeration/escape, ≤25 reversal/wishful-thinking, Mittelfeld gleichverteilt mod-4; Wort microsecond-seeded aus aktivem Pool minus retired; JSON enthaelt `dial` + `cost_mix_target`).
 4. Variation-Guard im Picker-Skript liest letzte 10 Rows von `field-notes.md`, blockiert/re-rolled bei Archetype-Streak (≥3) oder Wort-Wiederholung.
 5. Archetype-Prompt-Template wird geladen, LLM-Call erzeugt 10 Provokationen mit Adoption-Cost-Tag + Anchor.
 6. Output-Datei in `.agent-memory/lab/crazy-professor/YYYY-MM-DD-HHMM-<topic-slug>.md`.

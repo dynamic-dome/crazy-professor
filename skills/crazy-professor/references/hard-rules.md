@@ -132,7 +132,9 @@ All reviews use three criteria:
 
 **Verdict levels:** `kept` (durable value), `conditional` (kept iff a
 named artefact materializes within deadline), `backlog` (strong concept
-but too heavy for immediate adoption).
+but too heavy for immediate adoption), `discarded` (no durable value —
+harvest verdict since v0.14.0; counts as a non-keeper for the
+Museum-Clause).
 
 **Special rule for labyrinth-librarian:** Do not evaluate the
 historical/scientific analogies as facts. Only the transferred

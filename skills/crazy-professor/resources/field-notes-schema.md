@@ -97,7 +97,7 @@ during reviews. Format is free-form but the convention is:
 
 - Total invocations so far: <N> (<breakdown if relevant>)
 - Kept outputs: <count> <status notes>
-- Review1-Votum: <count> kept · <count> conditional · <count> backlog · <count> pending
+- Review1-Votum: <count> kept · <count> conditional · <count> backlog · <count> discarded · <count> pending
 - Words under retirement watch (2 of 3 flags): []
 - Words retired: [] (see `<repo-root>/skills/crazy-professor/resources/retired-words.txt`)
 
