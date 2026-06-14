@@ -6,6 +6,7 @@
 |----------------|--------|------|--------------|
 | Single-Run-Mode | aktiv | 2026-04-22 | 1 Archetype, 10 Provokationen + 3 Extracted Concepts + 1 Next-Experiment, ~30s |
 | Chat-Mode (`--chat`) | aktiv | 2026-04-23 | 4 Archetypen, 3 Runden, 20 destillierte Ideen, ~10 LLM-Calls |
+| Duett-Modus (`--duet [a,b]`) | aktiv | 2026-06-14 | 2 Archetypen, je 5 Provokationen + gegenseitige Cross-Pollination, Main-Model-Destillation auf 6 Ideen + 1 Experiment, ~4 Calls/~1 min (kein Codex). Ohne Paar: Max-Spannungs-Diagonale. |
 | Lab (`--lab`) | aktiv | 2026-04-30 | Standalone Browser für Output-Triage, paste-only, kein LLM-Call |
 | Wildness-Dial (`--dial 0-100`) | aktiv | 2026-06-12 | Soll-Mischung wild/tame über die Cost-Tags (Default 60 → 6 wild / 4 tame) + dial-gewichteter Operator-Pick. Hard Rule 7: Tags bleiben ehrlich, Abweichung >±1 wird diagnostiziert. |
 | Extracted Concepts | aktiv | 2026-06-12 | de Bonos Movement-Schritt: 3 Mechanismus-Konzepte pro Single-Run, je 2-3 verankerte Pfade. Hard Rule 8: Substantiv-Phrasen, keine Imperativform, kein Ranking. |
@@ -25,6 +26,7 @@ Status-Werte: `aktiv`, `experimentell`, `geplant`, `out of scope`, `deprecated`,
 - **Single-Run** (default): 1 Archetype-Pick via mod-4 + Variation-Guard, 10 Provokationen, 3 Extracted Concepts, 1 Next-Experiment. Optional `--dial 0-100` fuer die wild/tame-Mischung.
 - **Chat-Mode** (`--chat`): alle 4 Archetypen parallel in Runde 1 (5 Provokationen je), Cross-Pollination in Runde 2 (counter/extend), Codex-Distillation in Runde 3 (5 Final-Ideen je Archetype = 20 total). `--dial` wird durchgereicht, constraint die Runden aber nicht.
 - **Chat-Mode Dry-Run** (`--chat --dry-run-round1`): nur Runde 1, kein Round-2/3, fuer internes Testen.
+- **Duett-Modus** (`--duet [a,b]`): genau 2 Archetypen, je 5 Provokationen (Runde 1), gegenseitige counter/extend-Cross-Pollination (Runde 2, jeder sieht nur die 5 des anderen), Main-Model-Destillation auf 6 Ideen + 1 Experiment. ~4 Calls, kein Codex. Ohne `--pair` leitet der Picker eine Max-Spannungs-Diagonale ab (jester×radagast / librarian×alchemist), seed-rotiert. `--dial` gewichtet nur die Operatoren (kein Cost-Mix-Korridor bei 6 Items).
 - **Lab** (`--lab`): standalone Browser, paste-only, kein LLM-Call.
 - **Harvest** (`--harvest`): standalone Triage-Dialog, keine Generierung, kein Picker-Call. Pending Runs reviewen, Verdikte protokollieren, kept-Experimente materialisieren.
 

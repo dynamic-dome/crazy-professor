@@ -1,6 +1,6 @@
 ---
 title: crazy-professor — Hard Rules
-status: v0.14.0 (E1 Harvest, E2 Dial, E3 Extracted Concepts)
+status: v0.15.0 (E5 Duet-Mode; E1 Harvest, E2 Dial, E3 Extracted Concepts)
 load_when: any invocation, before generation
 path_convention: all paths are relative to plugin repo root <repo-root> = crazy-professor/
 ---
@@ -23,8 +23,10 @@ studies). The skill is a divergence tool, not an advisor.
    one existing structure in the user's infrastructure. "Adapt this in
    agentic-os iterations.jsonl" beats "adapt this somehow."
 5. **Exactly one concrete next experiment.** The final section names
-   ONE of the 10 provocations as testable in the next hour and nothing
-   more. This is the anti-adoption safety mechanism.
+   exactly ONE testable-in-the-next-hour pick and nothing more — drawn
+   from that mode's idea set (single-run: one of the 10 provocations or
+   a concept path; chat: one of the final 20; duet: one of The Six).
+   This is the anti-adoption safety mechanism.
 6. **No cross-archetype contamination.** Each archetype has a
    verbotenes Vokabular block in its prompt template. Honor those bans
    as prose rules — there is no automated linter as of v0.13.0.

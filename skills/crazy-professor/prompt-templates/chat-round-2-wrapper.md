@@ -2,7 +2,7 @@
 title: Chat-Mode Runde-2 Prompt-Wrapper (Cross-Pollination)
 purpose: Wird um den Standard-Archetype-Prompt herum gelegt, wenn Chat-Mode Runde 2 laeuft. Der Archetype sieht die 15 Provokationen der anderen drei und produziert 3 Gegen- oder Extend-Provokationen aus seiner Stimme.
 applies_to: [first-principles-jester, labyrinth-librarian, systems-alchemist, radagast-brown]
-version: 0.14.0
+version: 0.15.0
 ---
 
 # Runde-2 Wrapper (Cross-Pollination)
@@ -128,6 +128,20 @@ dokumentiert die Degradierung explizit im Frontmatter:
 round2_status: degraded
 round2_reason: "<n> von 4 Archetypen unter 2 Provokationen"
 ```
+
+## Wiederverwendung im Duett-Modus (`--duet`, seit v0.15.0)
+
+Dieser Wrapper wird auch von Duett-Runde 2 (Step D4) verwendet — die
+counter/extend-Semantik und Stimm-Disziplin gelten identisch. Abweichend
+zur Chat-Topologie:
+
+- Der Archetyp sieht in Runde 2 die **5 Provokationen des EINEN anderen**
+  Archetypen, nicht "15 der anderen drei". Referenz-Konvention bleibt
+  `<archetype> #<n>`, bezieht sich aber nur auf den einen Partner.
+- Degradierung im Duett: liefert **einer der zwei** Archetypen unter 2
+  Provokationen → `round2_status: degraded`, nur Runde-1-Daten gehen in
+  die Destillation (statt der Chat-Regel "≥2 von 4").
+- Destillation: **Main-Model**, kein Codex.
 
 ## Abnahme-Kriterien fuer Phase 3
 

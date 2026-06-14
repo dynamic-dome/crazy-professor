@@ -11,10 +11,15 @@ Usage:
 Modes:
     --mode single         (default) one archetype/word/operator pick
     --mode chat           four parallel picks (one per archetype)
+    --mode duet           two picks for a chosen/derived archetype pair
 
 Options:
     --init-template <path>    if field-notes file is missing, copy this template there first
     --force-timestamp <iso>   override UTC timestamp (testing only)
+    --pair <a,b>              duet only: two archetypes (short or full
+                              names, e.g. "jester,radagast"). When
+                              absent, the picker derives a max-tension
+                              diagonal pair, seed-rotated by minute.
     --dial <0-100>            wildness dial (default 60). Maps to a target
                               cost-tag mix for the 10 provocations
                               (dial 60 -> 6 wild [high/system-break],
@@ -56,6 +61,25 @@ ARCHETYPES = (
     "radagast-brown",
 )
 OPERATORS = ("reversal", "exaggeration", "escape", "wishful-thinking")
+# Duet (v0.15.0): short + full archetype names both resolve to the full
+# name. Lets the user type `--pair jester,radagast`.
+ARCHETYPE_ALIASES = {
+    "jester": "first-principles-jester",
+    "first-principles-jester": "first-principles-jester",
+    "librarian": "labyrinth-librarian",
+    "labyrinth-librarian": "labyrinth-librarian",
+    "alchemist": "systems-alchemist",
+    "systems-alchemist": "systems-alchemist",
+    "radagast": "radagast-brown",
+    "radagast-brown": "radagast-brown",
+}
+# The two maximum-value-tension diagonals: break vs. shelter, and
+# foreign-import vs. self-analysis. The default duet pair rotates
+# between them by minute (see resolve_pair).
+TENSION_DIAGONALS = (
+    ("first-principles-jester", "radagast-brown"),
+    ("labyrinth-librarian", "systems-alchemist"),
+)
 # Dial-weighted operator lists (v0.14.0). High dial leans into the two
 # operators that push hardest sideways (exaggeration/escape); low dial
 # leans into the two gentler movements (reversal/wishful-thinking).
@@ -263,12 +287,96 @@ def pick_chat(
     }
 
 
+def resolve_pair(pair_arg: str | None, ts: dt.datetime) -> tuple[tuple[str, str] | None, str | None]:
+    """Resolve a duet pair. Returns (pair, error).
+
+    With --pair: parse two comma-separated archetype names (short or
+    full), validate distinctness and membership. Without --pair: derive
+    a max-tension diagonal, seed-rotated by minute.
+    """
+    if pair_arg:
+        parts = [p.strip().lower() for p in pair_arg.split(",") if p.strip()]
+        if len(parts) != 2:
+            return None, (
+                f"--pair needs exactly two archetypes, got {len(parts)}: {pair_arg!r}"
+            )
+        resolved = []
+        for p in parts:
+            full = ARCHETYPE_ALIASES.get(p)
+            if full is None:
+                return None, (
+                    f"unknown archetype {p!r}; valid: jester, librarian, "
+                    f"alchemist, radagast"
+                )
+            resolved.append(full)
+        if resolved[0] == resolved[1]:
+            return None, "--pair needs two distinct archetypes"
+        return (resolved[0], resolved[1]), None
+    return TENSION_DIAGONALS[ts.minute % 2], None
+
+
+def pick_duet(
+    words: list[str],
+    rows: list[dict],
+    ts: dt.datetime,
+    dial: int = DIAL_DEFAULT,
+    pair: tuple[str, str] | None = None,
+) -> dict:
+    """Two picks for a fixed archetype pair. Word-guard runs intra-duet.
+
+    Unlike chat, the archetypes are fixed (chosen or derived), so the
+    variation-guard never re-rolls the archetype itself — only words.
+    """
+    duet_words: set[str] = set()
+    picks = []
+    rolled = []
+    for i, archetype in enumerate(pair):
+        _, operator, _ = picker_seed(ts, offset_seconds=i, dial=dial)
+        word = pick_word(words, ts, offset=i * 11)
+        intra = "no"
+        if word in duet_words:
+            for candidate in words:
+                if candidate not in duet_words:
+                    word = candidate
+                    intra = "intra-duet"
+                    break
+        duet_words.add(word)
+        _, word_kept, re_rolled = variation_guard(
+            archetype, word, rows, [w for w in words if w not in duet_words or w == word], ts
+        )
+        if re_rolled == "archetype":
+            re_rolled = "no"
+        elif re_rolled == "both":
+            re_rolled = "word"
+        if intra == "intra-duet":
+            re_rolled = "intra-duet" if re_rolled == "no" else f"{re_rolled}+intra-duet"
+        picks.append({
+            "archetype": archetype,
+            "word": word_kept,
+            "operator": operator,
+            "re_rolled": re_rolled,
+        })
+        rolled.append(re_rolled)
+    aggregate = "no" if all(r == "no" for r in rolled) else "/".join(rolled)
+    return {
+        "timestamp": ts.isoformat().replace("+00:00", "Z"),
+        "mode": "duet",
+        "pair": list(pair),
+        "picks": picks,
+        "re_rolled_aggregate": aggregate,
+        "dial": dial,
+        "field_notes_rows_read": len(rows),
+    }
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="crazy-professor picker")
     p.add_argument("--field-notes", required=True, type=Path)
     p.add_argument("--words", required=True, type=Path)
     p.add_argument("--retired", required=True, type=Path)
-    p.add_argument("--mode", choices=("single", "chat"), default="single")
+    p.add_argument("--mode", choices=("single", "chat", "duet"), default="single")
+    p.add_argument("--pair", help="duet only: two archetypes 'a,b' "
+                   "(short or full names); default derives a max-tension pair")
     p.add_argument("--init-template", type=Path,
                    help="copy this file to --field-notes if missing")
     p.add_argument("--force-timestamp", help="ISO-8601 UTC override (testing)")
@@ -280,6 +388,10 @@ def main() -> int:
 
     if not 0 <= args.dial <= 100:
         print(f"error: --dial must be 0-100, got {args.dial}", file=sys.stderr)
+        return 1
+
+    if args.pair and args.mode != "duet":
+        print("error: --pair is only valid with --mode duet", file=sys.stderr)
         return 1
 
     # Initialization
@@ -311,8 +423,14 @@ def main() -> int:
 
     if args.mode == "single":
         result = pick_single(words, rows, ts, dial=args.dial)
-    else:
+    elif args.mode == "chat":
         result = pick_chat(words, rows, ts, dial=args.dial)
+    else:
+        pair, err = resolve_pair(args.pair, ts)
+        if err:
+            print(f"error: {err}", file=sys.stderr)
+            return 1
+        result = pick_duet(words, rows, ts, dial=args.dial, pair=pair)
 
     json.dump(result, sys.stdout, ensure_ascii=False)
     sys.stdout.write("\n")

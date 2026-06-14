@@ -11,6 +11,7 @@ The single source of truth is `.claude-plugin/plugin.json`. The following files 
 - `skills/crazy-professor/SKILL.md` — `metadata.version` in frontmatter
 - `skills/crazy-professor/resources/output-template.md` — `version` in the embedded frontmatter that gets copied into every single-run output
 - `skills/crazy-professor/resources/chat-output-template.md` — `version` in the embedded frontmatter that gets copied into every chat-run output
+- `skills/crazy-professor/resources/duet-output-template.md` — `version` in the embedded frontmatter that gets copied into every duet-run output (since v0.15.0)
 - `docs/chat-mode-flow.md` — `version` in own frontmatter and in the documented output frontmatter example
 - `skills/crazy-professor/prompt-templates/chat-curator.md`, `chat-round-1-wrapper.md`, `chat-round-2-wrapper.md` — `version` in frontmatter
 

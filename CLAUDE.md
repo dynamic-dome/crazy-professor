@@ -7,10 +7,11 @@ Pflichtlektüre zuerst: `HOW-TO-USE.md` (Wegweiser), dann je nach Aufgabe
 
 1. **Versions-Bump nur per `docs/VERSIONING.md`.** MINOR bei jedem
    user-sichtbaren Verhalten, PATCH bei Fixes/Doku. Die Version lebt an
-   **8 Stellen** (plugin.json ist Source of Truth; SKILL.md,
-   output-template, chat-output-template, chat-mode-flow ×2,
-   chat-curator, chat-round-1/2-wrapper spiegeln). Nie nur eine Stelle
-   bumpen. Commit-Message: `crazy-professor | vX.Y.Z: ...` + Git-Tag.
+   **9 Stellen** (plugin.json ist Source of Truth; SKILL.md,
+   output-template, chat-output-template, duet-output-template,
+   chat-mode-flow ×2, chat-curator, chat-round-1/2-wrapper spiegeln).
+   Nie nur eine Stelle bumpen. Commit-Message:
+   `crazy-professor | vX.Y.Z: ...` + Git-Tag.
 2. **Pfad-Konvention:** Inter-File-Referenzen in SKILL.md/references/
    commands schreiben sich als `<repo-root>/...` — beibehalten.
 3. **field-notes.md ist append-only Audit-Trail.** Automation editiert

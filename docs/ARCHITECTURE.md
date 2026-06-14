@@ -11,7 +11,7 @@ User Prompt / "crazy professor" / /crazy <topic>
        |
        v
   Slash-Command commands/crazy.md
-       |  (parses $ARGUMENTS, dispatches by --chat / --lab flags)
+       |  (parses $ARGUMENTS, dispatches by --duet / --chat / --lab / --harvest flags)
        v
   +---------------------+   +-------------------------+   +----------------+
   | Single-Run-Path     |   | Chat-Mode-Path (--chat) |   | Lab (--lab)    |
@@ -46,12 +46,12 @@ User Prompt / "crazy professor" / /crazy <topic>
 
 ### Slash-Command
 - **Datei(en):** `commands/crazy.md`
-- **Aufgabe:** Trigger via `/crazy <topic> [--chat] [--lab]`. Parst `$ARGUMENTS`, dispatcht zwischen Single-Run, Chat-Mode und Lab.
+- **Aufgabe:** Trigger via `/crazy <topic> [--duet a,b] [--chat] [--dial 0-100] [--lab] [--harvest]`. Parst `$ARGUMENTS`, dispatcht zwischen Single-Run, Duett-Mode, Chat-Mode, Lab und Harvest.
 - **Abhaengigkeiten:** `skills/crazy-professor/SKILL.md`
 
 ### SKILL.md
 - **Datei(en):** `skills/crazy-professor/SKILL.md`
-- **Aufgabe:** Operative Vorschrift fuer Claude. Definiert Schritte 1-5 fuer Single-Run, C1-C6 fuer Chat-Mode, L1 fuer Lab. Verweist auf Hard-Rules (Museum-Clause, Field-Test-Rule).
+- **Aufgabe:** Operative Vorschrift fuer Claude. Definiert Schritte 1-5 fuer Single-Run, C1-C6 fuer Chat-Mode, D1-D5 fuer Duett-Mode, L1 fuer Lab, H1-H4 fuer Harvest. Verweist auf Hard-Rules (Museum-Clause, Field-Test-Rule).
 - **Abhaengigkeiten:** prompt-templates/, references/, resources/
 
 ### Prompt-Templates
@@ -100,6 +100,12 @@ Chat-Mode-Variante:
 - Output-Datei in `.agent-memory/lab/crazy-professor/chat/YYYY-MM-DD-HHMM-<topic-slug>.md` mit `mode: chat`-Frontmatter.
 - Field-Notes-Row markiert `mode: chat`, `archetype: all-4`, `word: multi`.
 
+Duett-Variante (`--duet`):
+- Schritt 3: 1 Picker-Aufruf `--mode duet [--pair a,b]`; ohne Paar leitet `resolve_pair()` eine Max-Spannungs-Diagonale ab (jester×radagast / librarian×alchemist), seed-rotiert per Minute. JSON liefert `pair` + 2 Picks (intra-duet Wort-Guard, dial-gewichtete Operatoren).
+- Schritt 5 ersetzt durch Round-1 (2 parallele Calls, 5 Provokationen je), Round-2 (2 parallele Cross-Pollination-Calls, jeder sieht nur die 5 des anderen), Distillation durchs **Main-Model** (kein Codex) auf 6 Ideen + 1 Experiment.
+- Output-Datei in `.agent-memory/lab/crazy-professor/duet/YYYY-MM-DD-HHMM-<topic-slug>.md` mit `mode: duet`-Frontmatter.
+- Field-Notes-Row markiert `mode: duet`, `archetype: <a>+<b>`, `word: multi`.
+
 Lab-Variante:
 - Schritt 1+2 reduziert auf `webbrowser.open(...)` mit dem statischen HTML-Pfad.
 - Keine Schritte 3-7. Kein LLM-Call, kein File-Write, keine Field-Notes-Row.
@@ -110,6 +116,7 @@ Lab-Variante:
 |----------|-----|------|--------|
 | Output-Files Single | Markdown | `.agent-memory/lab/crazy-professor/YYYY-MM-DD-HHMM-<topic-slug>.md` | Pro Single-Run: 10 Provokationen + 3 Extracted Concepts + Next-Experiment + Self-Flag-Checkboxes |
 | Output-Files Chat | Markdown | `.agent-memory/lab/crazy-professor/chat/YYYY-MM-DD-HHMM-<topic-slug>.md` | Pro Chat-Run: 3 Runden + 20 Final-Ideen + Top-3 + Next-Experiment |
+| Output-Files Duett | Markdown | `.agent-memory/lab/crazy-professor/duet/YYYY-MM-DD-HHMM-<topic-slug>.md` | Pro Duett-Run: 2 Runden + 6 destillierte Ideen + Next-Experiment (Distiller = main-model) |
 | Field-Notes-Log | Markdown-Tabelle | `.agent-memory/lab/crazy-professor/field-notes.md` | Eine Row pro Run, Single + Chat gemischt |
 | Experiments-Backlog | Markdown | `.agent-memory/lab/crazy-professor/experiments-backlog.md` | Harvest-Fallback-Ziel fuer kept-Experimente (wenn kein DCO-/Wiki-TODO-System erreichbar) |
 | Provocation-Words-Pool | TXT | `skills/crazy-professor/resources/provocation-words.txt` | Aktive Wort-Liste, eine Zeile je Eintrag |
@@ -128,7 +135,7 @@ Persistenz ist ohne Telemetrie-Layer (in v0.13.0 zurueckgebaut). Field-Notes-Mar
 - **Lokal nur**: Plugin in `~/.claude/plugins/` (oder `~/.claude/skills/<name>/` fuer Standalone-Form).
 - **Marketplace**: aktuell nicht im offiziellen Anthropic-Marketplace. Local-Install via `claude plugin install crazy-professor --scope user`. README beschreibt Marketplace-Variante mit `claude plugin marketplace add dynamic-dome/crazy-professor`.
 - **Update**: `claude plugin update crazy-professor`. Marketplace-Cache wird neu gezogen — Quelle muss als Tag/Release veroeffentlicht sein.
-- **Trigger**: Slash-Command `/crazy <topic> [--chat] [--dial 0-100]` / `/crazy --lab` / `/crazy --harvest` oder Trigger-Phrasen aus SKILL.md (deutsch + englisch).
+- **Trigger**: Slash-Command `/crazy <topic> [--duet a,b] [--chat] [--dial 0-100]` / `/crazy --lab` / `/crazy --harvest` oder Trigger-Phrasen aus SKILL.md (deutsch + englisch).
 
 ## Was in v0.13.0 entfernt wurde
 

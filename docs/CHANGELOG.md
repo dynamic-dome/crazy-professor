@@ -4,6 +4,21 @@ Neueste Eintraege oben. Format: `## [vX.Y.Z] [YYYY-MM-DD] Kurztitel` für Versio
 
 ---
 
+## [v0.15.0] [2026-06-14] Duet-Mode (E5)
+
+**Versions-Bump-Begründung (per VERSIONING.md):** MINOR-Bump weil ein neuer User-Flag (`--duet [a,b]`) mit eigenem Modus, eigenem Output-Template und neuem Frontmatter (`mode: duet`) hinzukommt.
+
+**Anlass:** D4-Gate aufgehoben — der erste echte Harvest (2026-06-14) lieferte reale kept-Daten (3 Runs / 3 kept), womit das Erweiterungs-Gate aus der Multi-Perspektiven-Analyse (`docs/reviews/2026-06-12-fable-multi-perspektiven-analyse.md`) datenseitig erfüllt ist. Aus dem E4-E10-Backlog wurde **E5 — Duett-Modus** als nächster Bau gewählt (User-Entscheidung).
+
+- **E5 — Duett-Modus (`/crazy <topic> --duet [a,b]`, Steps D1-D5):** Mittel-Tier zwischen Single-Run (1 Call) und Chat (~10 Calls). Genau zwei Archetypen, je 5 Provokationen (Runde 1), gegenseitige counter/extend-Cross-Pollination (Runde 2, jeder sieht nur die 5 des anderen), dann **Destillation durchs Main-Model** (NICHT Codex — Duett bleibt billig und abhängigkeitsfrei) auf **6 Ideen + 1 Next-Experiment**. ~4 LLM-Calls, ~1 Minute. Die 6 sind Survivor der Kreuzung, kein Ranking und keine Kür (Hard Rule 1).
+- **Paar-Wahl als kreatives Material:** ohne explizites Paar leitet der Picker eine **Max-Spannungs-Diagonale** ab (jester×radagast = Bruch vs. Schutz, oder librarian×alchemist = Fremdimport vs. Eigenanalyse), seed-rotiert per Minute. Explizit via `--duet jester,radagast` (Kurz- oder Vollnamen).
+- **`picker.py`:** neuer `--mode duet` + `--pair`, `ARCHETYPE_ALIASES`, `TENSION_DIAGONALS`, `resolve_pair()`, `pick_duet()` (intra-duet Wort-Guard, dial-gewichtete Operatoren, keine Archetyp-Re-Rolls da Paar fix). Smoke-Tests grün (resolve_pair Default/explizit/Fehlerpfade, pick_duet distinkte Wörter, dial-Operator-Pool, single/chat-Regression unverändert, `--pair` ohne duet → Exit 1).
+- **Kein Cost-Mix-Korridor** über ein Duett (zu wenige Final-Items) — der Dial gewichtet nur die Operatoren (Step D2). Cost-Tags werden bei der Destillation vergeben (wie Chat-Runde 3), ehrlich pro Idee.
+- **Neues File:** `resources/duet-output-template.md` (Top-6 + 1 Experiment, duett-spezifischer Banner, Distiller = main-model). Outputs landen in `.agent-memory/lab/crazy-professor/duet/`. VERSIONING.md-Mirror-Liste auf **9 Stellen** erweitert (duet-output-template), CLAUDE.md §1 nachgezogen.
+- Versions-Bump auf 0.15.0 in 9 Files (plugin.json, SKILL.md, output-template, chat-output-template, **duet-output-template**, chat-mode-flow ×2, chat-curator, chat-round-1/2-wrapper).
+
+---
+
 ## [v0.14.0] [2026-06-12] Dial + Extracted Concepts + Harvest (E1-E3)
 
 **Versions-Bump-Begründung (per VERSIONING.md):** MINOR-Bump weil zwei neue User-Flags (`--dial`, `--harvest`) hinzukommen und die Single-Run-Output-Struktur sich ändert (neue Pflicht-Sektion "Extracted Concepts", neues Frontmatter-Feld `dial`).

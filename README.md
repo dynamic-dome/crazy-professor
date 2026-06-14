@@ -64,13 +64,14 @@ Runs the divergence generator on `<topic>`. Add `--dial 0-100` to tune how wild 
 
 ## Status
 
-v0.14.0 active (released 2026-06-12). User-facing surfaces: single-run
-(with `--dial` and Extracted Concepts), Chat-Mode, the static Lab
-(`/crazy --lab`), and the Harvest mode (`/crazy --harvest`). The v0.13.0
-lean core is unchanged: Phase 4-8 stays rolled back (telemetry,
-voice/word-pool/cross-pollination linters, eval-suite, run-planner,
-patch-suggester, browser playground, telegram-dialogue scaffold,
-ideation-lab v2 design). See `docs/CHANGELOG.md` for the v0.14.0 and
-v0.13.0 entries.
+v0.15.0 active (released 2026-06-14). User-facing surfaces: single-run
+(with `--dial` and Extracted Concepts), the new Duet-Mode
+(`/crazy <topic> --duet [a,b]` — two voices, ~4 calls, 6 distilled
+ideas), Chat-Mode, the static Lab (`/crazy --lab`), and the Harvest mode
+(`/crazy --harvest`). The v0.13.0 lean core is unchanged: Phase 4-8
+stays rolled back (telemetry, voice/word-pool/cross-pollination linters,
+eval-suite, run-planner, patch-suggester, browser playground,
+telegram-dialogue scaffold, ideation-lab v2 design). See
+`docs/CHANGELOG.md` for the v0.15.0, v0.14.0 and v0.13.0 entries.
 
 Local-only.

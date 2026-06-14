@@ -2,7 +2,7 @@
 title: Chat-Mode Runde-1 Prompt-Wrapper
 purpose: Wird um den Standard-Archetype-Prompt herum gelegt, wenn Chat-Mode Runde 1 laeuft.
 applies_to: [first-principles-jester, labyrinth-librarian, systems-alchemist, radagast-brown]
-version: 0.14.0
+version: 0.15.0
 ---
 
 # Runde-1 Wrapper (Chat-Mode)
@@ -83,6 +83,20 @@ ein Wort das bei Jester schon gezogen wurde, blockt nicht den
 Librarian. Aber innerhalb desselben Runs duerfen sich die 4 Woerter
 nicht wiederholen — falls mod die gleichen Woerter zieht, zweites
 Archetype bekommt Re-Roll (loggt `re-rolled: intra-chat`).
+
+## Wiederverwendung im Duett-Modus (`--duet`, seit v0.15.0)
+
+Dieser Wrapper wird auch von Duett-Runde 1 (Step D3) verwendet. Die
+Count-/kein-Tag-/kein-Experiment-/kein-Flag-Semantik gilt identisch.
+Abweichend zur Chat-Topologie:
+
+- Es laufen **zwei** Archetypen parallel, nicht vier — "drei weitere
+  Archetypen" oben ist im Duett **einer**.
+- Der Output geht in Runde 2 an den **einen** anderen Archetypen (dessen
+  5 Provokationen, nicht 15) und danach an die **Main-Model-Destillation**
+  (NICHT Codex — Duett hat keinen Codex-Schritt).
+- Picker-Offsets: 2 Picks aus `--mode duet`; intra-duet Wort-Guard statt
+  intra-chat.
 
 ## Abnahme-Kriterien fuer Phase 2
 

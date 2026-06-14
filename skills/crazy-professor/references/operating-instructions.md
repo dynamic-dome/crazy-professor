@@ -1,6 +1,6 @@
 ---
 title: crazy-professor — Operating Instructions
-status: v0.14.0 (E1 Harvest, E2 Dial, E3 Extracted Concepts)
+status: v0.15.0 (E5 Duet-Mode; E1 Harvest, E2 Dial, E3 Extracted Concepts)
 load_when: any invocation, after parsing the trigger
 path_convention: all paths are relative to plugin repo root <repo-root> = crazy-professor/
 ---
@@ -8,10 +8,10 @@ path_convention: all paths are relative to plugin repo root <repo-root> = crazy-
 # Operating Instructions
 
 Claude follows these steps on every invocation. Steps 1-5 cover the
-default single-run path; Steps C1-C6 cover Chat-Mode (`--chat`); Step
-L1 covers `--lab`; Steps H1-H4 cover Harvest (`--harvest`). All file
-paths are relative to the plugin repo root (`<repo-root>` =
-`crazy-professor/`).
+default single-run path; Steps C1-C6 cover Chat-Mode (`--chat`); Steps
+D1-D5 cover Duet-Mode (`--duet`); Step L1 covers `--lab`; Steps H1-H4
+cover Harvest (`--harvest`). All file paths are relative to the plugin
+repo root (`<repo-root>` = `crazy-professor/`).
 
 ## Single-Run Path
 
@@ -23,12 +23,21 @@ paths are relative to the plugin repo root (`<repo-root>` =
   parsing, no generation). `--harvest` is standalone; combined with
   `--chat` or a topic, reject with:
   `--harvest is standalone. Run /crazy --harvest on its own.`
+- If `$ARGUMENTS` contains `--duet`: jump to Step D1 (checked here,
+  BEFORE the single-run/chat resolution below, so a `topic --duet` is
+  never mis-routed to single-run). `--duet` takes an optional pair
+  argument immediately after the flag (`--duet jester,radagast`);
+  without it the picker derives a max-tension pair. `--duet` is mutually
+  exclusive with `--chat`, `--lab`, and `--harvest` — reject any
+  combination with:
+  `--duet cannot be combined with --chat/--lab/--harvest.` A topic is
+  mandatory (same rule as chat-mode).
 - If `$ARGUMENTS` contains `--dial <n>`: parse n as integer 0-100
   (reject anything else with a one-line error). Default when absent:
   60. With `--chat`, the dial is accepted but only echoed into the
   picker JSON — it does not constrain chat-round generation (note this
   in the run summary if the user passed it explicitly).
-- **Single-run with topic:** proceed.
+- **Single-run with topic** (no `--duet`/`--chat` flag): proceed.
 - **Single-run without topic:** use the most recent concrete task,
   plan, or problem from the current conversation as topic. If the
   conversation context is empty, meta, or too vague ("tell me a
@@ -166,6 +175,84 @@ using `chat-output-template.md`. Field-notes row marks `mode: chat`,
 user-facing summary: topic + 4 picks + round-2 status + distiller +
 output-file pointer. Do NOT repeat the 20 final ideas in the chat —
 the user reads them in the file.
+
+## Duet-Mode Path (`--duet`)
+
+Duet is the mid-tier between single (1 call) and chat (~10 calls): two
+archetypes, a mutual cross-pollination round, and a main-model
+distillation — ~4 calls, ~1 minute. It exists to fill the cost gap and
+to make the *pairing* itself creative material (break vs. shelter reads
+differently than foreign-import vs. self-analysis).
+
+**Step D1: Parse arguments.** Topic mandatory; reject `--duet` without
+topic exactly like chat-mode. Optional pair right after the flag
+(`--duet jester,radagast`; short or full archetype names). `--duet` is
+standalone-generative: never combined with `--chat`/`--lab`/`--harvest`
+(rejected in Step 1). `--dial` is accepted and weights the operator
+pick per archetype; there is NO hard cost-mix corridor over a duet (too
+few final items) — the dial is echoed in the output frontmatter.
+
+**Step D2: Picker call.**
+
+```bash
+python <repo-root>/skills/crazy-professor/scripts/picker.py \
+  --field-notes <target-project>/.agent-memory/lab/crazy-professor/field-notes.md \
+  --words <repo-root>/skills/crazy-professor/resources/provocation-words.txt \
+  --retired <repo-root>/skills/crazy-professor/resources/retired-words.txt \
+  --mode duet [--pair <a,b>] --dial <dial>
+```
+
+Returns one JSON object: `pair` (the two resolved full archetype
+names), `picks` (one `{archetype, word, operator, re_rolled}` per
+archetype), `re_rolled_aggregate`, `dial`. Without `--pair` the picker
+derives a max-tension diagonal (jester×radagast or
+librarian×alchemist), seed-rotated by minute. Word-guard runs
+intra-duet (no duplicate word across the two; marker `intra-duet`).
+Prose fallback if Python is missing: pick the diagonal by
+`utc_minute % 2`, then two words/operators as in the single-run
+fallback with the intra-duet dedup applied manually.
+
+**Step D3: Round 1 — 2 parallel LLM calls.** Each archetype with its
+standard prompt template + the `chat-round-1-wrapper.md` override block
+(exactly 5 provocations, no cost-tag, no experiment, no self-flag). The
+wrapper's "three other archetypes" framing is cosmetic here — substitute
+"one other archetype". User message: topic + word + operator. Each
+returns 5 provocations; collect all 10. If EITHER archetype returns
+empty/format-broken output, abort duet and fall back to a single-run
+with a note in the output file that duet failed in round 1.
+
+**Step D4: Round 2 — 2 parallel LLM calls (mutual cross-pollination).**
+Each archetype with its standard template + the
+`chat-round-2-wrapper.md` override block, but it sees only the OTHER
+archetype's 5 round-1 provocations (not 15). Each returns 2-3
+provocations with `counter:`/`extend:` markers, staying strictly in its
+own voice. Word/operator carry over from round 1 (no re-roll).
+
+Degradation: if EITHER archetype returns fewer than 2 provocations, set
+`round2_status: degraded` in the frontmatter, skip round-2 outputs
+entirely, and pass only round-1 data to distillation. NOT an abort.
+
+**Step D5: Distillation — main-model, Top-6 + 1 experiment.** The
+main-model (NOT Codex — that is chat-mode's distiller; duet stays cheap
+and dependency-free) distills the round-1 + round-2 material into
+exactly **6** ideas, each with a `[cost: ...]` tag (assigned here, as in
+chat round 3), an anchor, and the W/U/S score from the Review Rubric.
+Counter/extend provenance markers are preserved where an idea came from
+round 2. The 6 are NOT ranked or crowned (Hard Rule 1) — they are the
+distilled survivors. Then pick exactly ONE next experiment (Hard Rule
+5), testable within the hour. Honor the cost-tag honesty rule: tags are
+honest per idea, never bent.
+
+Write the output using
+`<repo-root>/skills/crazy-professor/resources/duet-output-template.md`
+to
+`<target-project>/.agent-memory/lab/crazy-professor/duet/YYYY-MM-DD-HHMM-<topic-slug>.md`
+(create the `duet/` directory if missing). Then append a field-notes
+row marking `mode: duet`, `archetype: <a>+<b>`, `word: multi`,
+`operator: multi`, with the `re_rolled` aggregate. Brief user-facing
+summary: topic + the pair + round-2 status + output-file pointer. Do
+NOT repeat the 6 final ideas in the chat — the user reads them in the
+file.
 
 ## Lab Path (`--lab`, standalone)
 

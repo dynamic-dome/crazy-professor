@@ -23,9 +23,13 @@ description: >
   cost mix; every single-run extracts 3 transferable concepts between
   provocations and experiment; harvest mode (`--harvest`) triages
   pending runs and lands kept experiments into the user's TODO system.
+  Duet (`--duet [a,b]` flag, since v0.15.0): two archetypes
+  cross-pollinate in ~4 LLM calls (no Codex) and distill to 6 ideas —
+  the mid-tier between single-run and chat; without an explicit pair the
+  picker derives a max-tension diagonal.
 metadata:
   author: domes
-  version: '0.14.0'
+  version: '0.15.0'
   part-of: crazy-professor
   layer: divergence
   status: V1 + Chat-Mode + Lab + Dial/Concepts/Harvest (Phase 4-8 rolled back)
@@ -56,12 +60,13 @@ verdrehtes", "zu gerade gedacht", "stoss mich an".
 |---|---|---|
 | `/crazy <topic>` | Single-Run (default, ~30s, 1 LLM call) | 10 provocations + 3 extracted concepts + 1 next experiment |
 | `/crazy <topic> --dial <0-100>` | Single-Run with wildness dial (default 60) | Same, with dial-steered wild/tame cost mix |
+| `/crazy <topic> --duet [a,b]` | Duet-Mode (~1 min, ~4 LLM calls, no Codex) | Two voices cross-pollinate → 6 distilled ideas + 1 next experiment |
 | `/crazy <topic> --chat` | Chat-Mode (~2-4 min, ~10 LLM calls + Codex) | 4×5 distilled ideas + Top-3 + 1 next experiment |
 | `/crazy --lab` | Lab (browser-only, no LLM) | Static review surface for an existing output |
 | `/crazy --harvest` | Harvest (dialog, no generation) | Verdicts for pending runs + kept experiments landed in TODO system |
 
-The full step-by-step (Steps 1-5 single, C1-C6 chat, L1 lab, H1-H4
-harvest, plus the topic-resolution contract) lives in
+The full step-by-step (Steps 1-5 single, C1-C6 chat, D1-D5 duet, L1
+lab, H1-H4 harvest, plus the topic-resolution contract) lives in
 `<repo-root>/skills/crazy-professor/references/operating-instructions.md`.
 Load that file before generating any output.
 
@@ -98,7 +103,8 @@ Single Python helper, stdlib-only:
 - `picker.py` — deterministic stochastic-element selection with
   built-in variation-guard. Reads `field-notes.md`, the active word
   pool, and the retired list. Writes JSON to stdout. Modes: `--mode
-  single` (default), `--mode chat`. `--dial 0-100` (default 60) maps
+  single` (default), `--mode chat`, `--mode duet` (with optional
+  `--pair a,b`). `--dial 0-100` (default 60) maps
   to a `cost_mix_target` (wild/tame over 10 provocations) and weights
   the operator pick. The skill's only required external call. If
   Python is unavailable, prose fallback in

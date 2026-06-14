@@ -1,6 +1,6 @@
 # HOW-TO-USE — crazy-professor
 
-Wegweiser für User und Agent. Stand: v0.14.0 (2026-06-12). Was das Plugin
+Wegweiser für User und Agent. Stand: v0.15.0 (2026-06-14). Was das Plugin
 *ist*, steht im Einzeiler: ein Divergenz-Generator — vier Archetypen
 produzieren seltsame, aber verankerte Provokationen, niemals Ratschläge.
 
@@ -9,6 +9,7 @@ produzieren seltsame, aber verankerte Provokationen, niemals Ratschläge.
 ```text
 /crazy <topic>                  # Single-Run: 10 Provokationen + 3 Konzepte + 1 Experiment (~30s)
 /crazy <topic> --dial 80        # wilder (Dial 0-100, Default 60 = 6 wild / 4 machbar)
+/crazy <topic> --duet jester,radagast  # 2 Stimmen kreuzen sich → 6 Ideen (~1 min, kein Codex); Paar optional
 /crazy <topic> --chat           # alle 4 Stimmen, 3 Runden, 20 destillierte Ideen (~2-4 min)
 /crazy --lab                    # statischer Review-Browser (paste-only, kein LLM)
 /crazy --harvest                # pending Runs reviewen, kept-Experimente ins TODO-System
@@ -39,10 +40,11 @@ auch ("crazy professor", "provoke me", "verrueckter professor", ...).
 |---|---|---|
 | Slash-Command | `commands/crazy.md` | Flag-Parsing + Dispatch |
 | Skill-Kern | `skills/crazy-professor/SKILL.md` | Einstieg, Modi-Tabelle, Archetypen |
-| Operating-Instructions | `skills/crazy-professor/references/operating-instructions.md` | Steps 1-5 / C1-C6 / L1 / H1-H4 |
+| Operating-Instructions | `skills/crazy-professor/references/operating-instructions.md` | Steps 1-5 / C1-C6 / D1-D5 / L1 / H1-H4 |
 | Hard Rules | `skills/crazy-professor/references/hard-rules.md` | 8 Hard Rules, Museum-Clause, Harvest Rules, Review-Rubrik |
 | Archetyp-Templates | `skills/crazy-professor/prompt-templates/` | Voice-Verträge (Pflicht-/verbotenes Vokabular) |
 | Picker | `skills/crazy-professor/scripts/picker.py` | Archetyp × Wort × Operator + Dial, stdlib-only |
+| Duett-Output-Template | `skills/crazy-professor/resources/duet-output-template.md` | Top-6 + 1 Experiment, Distiller = main-model |
 | Lab | `skills/crazy-professor/lab/index.html` | Browser-Triage, kein LLM |
 | Wort-Pool | `skills/crazy-professor/resources/provocation-words.txt` | 176 aktive Provokationswörter |
 
@@ -52,7 +54,7 @@ auch ("crazy professor", "provoke me", "verrueckter professor", ...).
 - `docs/CAPABILITIES.md` — Fähigkeiten-Tabelle mit Status
 - `docs/ARCHITECTURE.md` — Datenfluss, Persistenz, Sicherheit
 - `docs/CHANGELOG.md` — Versions-Historie (neueste oben)
-- `docs/VERSIONING.md` — Bump-Policy (8 Versions-Stellen!)
+- `docs/VERSIONING.md` — Bump-Policy (9 Versions-Stellen!)
 - `docs/chat-mode-flow.md` — kanonische Chat-Mode-Spec
 - `docs/reviews/` — externe Analysen (Perplexity 2026-06-03, Fable Multi-Perspektiven 2026-06-12 inkl. Erweiterungs-Backlog E4-E10)
 - `skills/crazy-professor/references/roadmap.md` — bewusst geparkte Features

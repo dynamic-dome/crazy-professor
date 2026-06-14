@@ -1,5 +1,5 @@
 {
   "name": "crazy-professor",
-  "version": "0.14.0",
-  "description": "Divergence generator for creative ideation. Four active voices (first-principles-jester, labyrinth-librarian, systems-alchemist, radagast-brown) produce strange but anchored provocations, never advice. Default mode returns 10 provocations plus 3 extracted concepts; --dial 0-100 tunes the wild/tame cost mix; --chat mode runs all four voices and distills 20 ideas; --lab opens a static review browser; --harvest triages pending runs and lands kept experiments. Local-only. Phase 4-8 was rolled back in v0.13.0 (see CHANGELOG)."
+  "version": "0.15.0",
+  "description": "Divergence generator for creative ideation. Four active voices (first-principles-jester, labyrinth-librarian, systems-alchemist, radagast-brown) produce strange but anchored provocations, never advice. Default mode returns 10 provocations plus 3 extracted concepts; --dial 0-100 tunes the wild/tame cost mix; --duet [a,b] crosses two voices into 6 distilled ideas (~4 calls, no Codex); --chat mode runs all four voices and distills 20 ideas; --lab opens a static review browser; --harvest triages pending runs and lands kept experiments. Local-only. Phase 4-8 was rolled back in v0.13.0 (see CHANGELOG)."
 }
