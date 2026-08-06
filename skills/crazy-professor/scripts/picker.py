@@ -198,7 +198,13 @@ def variation_guard(
         for i, prev in enumerate(reversed(last_archetypes)):
             if prev in seen_recency and seen_recency[prev] == -1:
                 seen_recency[prev] = i
-        candidates.sort(key=lambda a: (seen_recency[a] if seen_recency[a] >= 0 else 1e9, a))
+        candidates.sort(
+            key=lambda a: (
+                seen_recency[a] != -1,
+                -seen_recency[a] if seen_recency[a] != -1 else 0,
+                a,
+            )
+        )
         archetype = candidates[0]
         re_rolled = "archetype"
 

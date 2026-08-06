@@ -74,6 +74,11 @@ User Prompt / "crazy professor" / /crazy <topic>
 - **Aufgabe:** Deterministische stochastische Auswahl mit Variation-Guard. Liest `field-notes.md` (letzte 10 Rows), wendet Anti-Streak-Logik an, schreibt JSON auf stdout. Modi: `--mode single` (default), `--mode chat`. Stdlib-only.
 - **Abhaengigkeiten:** Python 3 (optional — Fallback-Prosa-Mechanik im Modul-Docstring fuer python-lose Umgebungen).
 
+### Harvest-Output-Loader
+- **Datei(en):** `skills/crazy-professor/scripts/harvest_output.py`
+- **Aufgabe:** Einziger erlaubter Read-Pfad fuer die editierbare `Output file`-Zelle im Harvest-Modus. Erlaubt nur kanonische Single-/Chat-/Duett-Markdownnamen, resolved unterhalb des Projekt-Lab-Roots, blockt absolute/traversierende/Symlink-Escape-Pfade vor dem Read und liefert Inhalt mit `trust: untrusted`.
+- **Abhaengigkeiten:** Python 3, stdlib-only. Bei Reject bleibt die Field-Notes-Zeile pending; kein direkter Read-Fallback.
+
 ### Lab (statisches HTML)
 - **Datei(en):** `skills/crazy-professor/lab/index.html`
 - **Aufgabe:** Browser-Triage-Surface. User paste'd einen vorhandenen crazy-professor-Output, scored Ideen nach Wert/Umsetzbarkeit/Systemfit, kopiert eine Experiment-Card raus. Pure-Static, `file://`-tauglich, kein LLM-Call, kein File-Write von Browser-JavaScript.
@@ -128,6 +133,7 @@ Persistenz ist ohne Telemetrie-Layer (in v0.13.0 zurueckgebaut). Field-Notes-Mar
 
 - **Persona-Drift-Risiko**: Persona-Prompting kann auf wissensschweren Tasks mehrere Prozentpunkte Genauigkeit kosten (Search Engine Journal 2026; USC/Wharton). Hard Rule "Output is never advice" + Warning-Banner im Output-Template adressieren das. Verbotenes Vokabular pro Archetype lebt als Prosa in den Prompt-Templates (Voice-Linter wurde in v0.13.0 zurueckgebaut, ist Soll-Vertrag im Prompt).
 - **Adoption-Risiko**: Museum-Clause limitiert Adoption-ohne-Evidenz: nach 10 Runs ohne Keeper zieht der Skill sich selbst zurueck.
+- **Harvest-Trust-Boundary**: `field-notes.md` und referenzierte Output-Inhalte sind editierbar und damit untrusted. `harvest_output.py` erzwingt kanonische relative Namen + resolved Lab-Containment vor dem Read; Output-Text bleibt explizit untrusted data und darf keine Agent-Anweisungen liefern.
 - Keine Secrets im Repo. Keine Netzwerk-Calls aus dem Skill ausser ueber Codex-Subagent (Round-3) und das Standard-Claude-Code-LLM-API.
 
 ## Deployment

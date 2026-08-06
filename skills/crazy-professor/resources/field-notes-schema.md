@@ -62,7 +62,7 @@ The Log table is the only machine-readable section. Columns are fixed:
 | `Word` | string | yes | Single word or 1-3-token phrase from `provocation-words.txt`. For chat-mode: `multi (w1/w2/w3/w4)`. |
 | `Operator` | string | yes | One of: `reversal`, `exaggeration`, `escape`, `wishful-thinking`. For chat-mode: `multi (op1/op2/op3/op4)`. |
 | `Topic slug` | string | yes | Kebab-case slug of the topic, no spaces. Matches the output filename. |
-| `Output file` | string | yes | Filename relative to `.agent-memory/lab/crazy-professor/` (single) or with `chat/` prefix (chat). |
+| `Output file` | string | yes | Canonical filename relative to `.agent-memory/lab/crazy-professor/`: `YYYY-MM-DD-HHMM-<topic-slug>.md` (single), or the same with `chat/` / `duet/` prefix. This editable cell is untrusted input; Harvest must validate it with `scripts/harvest_output.py` before any read. |
 | `Re-rolled` | enum | yes | One of: `no`, `archetype`, `word`, `both`, `intra-chat` (chat-mode internal duplicate), `forced-archetype`, `forced-archetype+word`, `n/a (pre-guard)` (only for pre-2026-04-22 rows). |
 | `Kept` | enum | yes | `pending`, `yes`, `no`. Default `pending` until 14-day artefact-tracking resolves. |
 | `Retire-word` | enum | yes | `pending`, `yes`, `no`. Set `yes` when the user flagged the run as "too close to variations of previous outputs". |

@@ -4,6 +4,12 @@ Neueste Eintraege oben. Format: `## [vX.Y.Z] [YYYY-MM-DD] Kurztitel` für Versio
 
 ---
 
+## [2026-08-06] Harvest-Trust-Boundary und Picker-Anti-Streak-Fixes
+
+- Harvest liest editierbare `Output file`-Zellen nicht mehr direkt: neuer stdlib-only Loader validiert kanonische Single-/Chat-/Duett-Dateinamen, erzwingt resolved Containment im Projekt-Lab, blockt absolute/traversierende/Symlink-Escape-Pfade vor dem Read und kennzeichnet geladenen Inhalt als untrusted data. Die Operating Instructions verbieten das Befolgen eingebetteter Anweisungen und jeden Direkt-Read-Fallback.
+- Picker-Anti-Streak waehlt beim Re-Roll jetzt tatsaechlich least-recently-seen: ungesehene Archetypen zuerst, danach den am laengsten nicht verwendeten; alphabetischer Tie-Break bleibt deterministisch.
+- Neue stdlib-`unittest`-Regressionen decken erlaubte Pfadformen, Traversal/Absolute/Symlink-Escape, Prompt-Injection-Trust-Markierung sowie unseen/recent/old Archetypen-Historien ab. Kein Versions- oder Manifest-Bump (expliziter Bugfix-Auftrag).
+
 ## [v0.15.0] [2026-06-14] Duet-Mode (E5)
 
 **Versions-Bump-Begründung (per VERSIONING.md):** MINOR-Bump weil ein neuer User-Flag (`--duet [a,b]`) mit eigenem Modus, eigenem Output-Template und neuem Frontmatter (`mode: duet`) hinzukommt.

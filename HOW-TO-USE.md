@@ -44,6 +44,7 @@ auch ("crazy professor", "provoke me", "verrueckter professor", ...).
 | Hard Rules | `skills/crazy-professor/references/hard-rules.md` | 8 Hard Rules, Museum-Clause, Harvest Rules, Review-Rubrik |
 | Archetyp-Templates | `skills/crazy-professor/prompt-templates/` | Voice-Verträge (Pflicht-/verbotenes Vokabular) |
 | Picker | `skills/crazy-professor/scripts/picker.py` | Archetyp × Wort × Operator + Dial, stdlib-only |
+| Harvest-Loader | `skills/crazy-professor/scripts/harvest_output.py` | Validiert editierbare Output-Pfade, blockt Lab-/Symlink-Escapes und markiert Inhalt als untrusted |
 | Duett-Output-Template | `skills/crazy-professor/resources/duet-output-template.md` | Top-6 + 1 Experiment, Distiller = main-model |
 | Lab | `skills/crazy-professor/lab/index.html` | Browser-Triage, kein LLM |
 | Wort-Pool | `skills/crazy-professor/resources/provocation-words.txt` | 176 aktive Provokationswörter |
@@ -58,6 +59,14 @@ auch ("crazy professor", "provoke me", "verrueckter professor", ...).
 - `docs/chat-mode-flow.md` — kanonische Chat-Mode-Spec
 - `docs/reviews/` — externe Analysen (Perplexity 2026-06-03, Fable Multi-Perspektiven 2026-06-12 inkl. Erweiterungs-Backlog E4-E10)
 - `skills/crazy-professor/references/roadmap.md` — bewusst geparkte Features
+
+## Entwickler-Checks
+
+```bash
+python -m unittest discover -s tests -p "test_picker.py" -v
+python -m unittest discover -s tests -p "test_harvest_output.py" -v
+python -m unittest discover -s tests -v
+```
 
 ## Install / Update
 
