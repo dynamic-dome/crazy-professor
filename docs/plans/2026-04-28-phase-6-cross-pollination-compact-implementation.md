@@ -11,7 +11,7 @@
 **Spec reference:** `docs/specs/2026-04-28-phase-6-cross-pollination-compact-design.md` (commit `9e854ce`).
 
 **Repo paths:**
-- Repo root: `C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor`
+- Repo root: `<repo-root>`
 - All script paths below are relative to that root.
 
 **Commit cadence:** one commit per task at the end of the task. Final phase-completion commit consolidates the version bump + docs (Task 13).

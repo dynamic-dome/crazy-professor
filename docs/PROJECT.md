@@ -3,7 +3,7 @@ project: crazy-professor
 status: active
 started: 2026-04
 stack: [Markdown, Claude-Code-Plugin, Codex-Subagent]
-repo: C:\Users\domes\Desktop\Claude-Plugins-Skills\crazy-professor
+repo: <repo-root>
 wiki_entity: "[[crazy-professor]]"
 ---
 # crazy-professor

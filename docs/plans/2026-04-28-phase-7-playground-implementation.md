@@ -11,7 +11,7 @@
 **Spec reference:** `docs/specs/2026-04-28-phase-7-playground-design.md` (commit `d7f822f`).
 
 **Repo paths:**
-- Repo root: `C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor`
+- Repo root: `<repo-root>`
 - All script paths below are relative to that root.
 
 **Commit cadence:** one commit per task at the end of the task. Final phase-completion commit consolidates the version bump + docs (Task 12).
@@ -123,7 +123,7 @@ def pick_single(args, words: list[str], rows: list[dict], ts: dt.datetime) -> di
 Run from repo root (Windows-Bash; uses Python helper for robustness):
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 python -c "
 import json, pathlib, tempfile, subprocess, sys
 tmp = pathlib.Path(tempfile.mkdtemp())
@@ -435,7 +435,7 @@ if __name__ == "__main__":
 - [ ] **Step 2: Smoke-test the skeleton**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 TMP_OUT=$(python -c "import tempfile, pathlib; print(pathlib.Path(tempfile.mkdtemp()) / 'pg.html')")
 python skills/crazy-professor/scripts/build_playground.py \
   --output "$TMP_OUT" \
@@ -1035,7 +1035,7 @@ const FIELD_NOTES_RECENT = {json.dumps(field_notes)};
 - [ ] **Step 2: Smoke-test the full build**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 TMP_OUT=$(python -c "import tempfile, pathlib; print(pathlib.Path(tempfile.mkdtemp()) / 'pg.html')")
 python skills/crazy-professor/scripts/build_playground.py \
   --output "$TMP_OUT" \
@@ -1131,7 +1131,7 @@ Expected: 5 task commits, both files exist, both helpers print usage. picker --h
 The built file from Task 5 is at `skills/crazy-professor/playground/index.html`. To verify the build is reproducible (idempotent), run again to a temp file and diff:
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 TMP_OUT=$(python -c "import tempfile, pathlib; print(pathlib.Path(tempfile.mkdtemp()) / 'pg2.html')")
 python skills/crazy-professor/scripts/build_playground.py \
   --output "$TMP_OUT" \
@@ -1573,7 +1573,7 @@ Replace with:
 - [ ] **Step 6: Run the full eval suite with all stages**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 TMP=$(python -c "import tempfile, pathlib; tmp = pathlib.Path(tempfile.mkdtemp()); (tmp/'corpus').mkdir(); print(tmp)")
 python skills/crazy-professor/scripts/eval_suite.py \
   --picker skills/crazy-professor/scripts/picker.py \
@@ -1695,7 +1695,7 @@ For each of `chat-curator.md`, `chat-round-1-wrapper.md`, `chat-round-2-wrapper.
 - [ ] **Step 7: Verify no leftover 0.11.0 (excluding historical)**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 grep -rn "0.11.0" skills/ .claude-plugin/ commands/ docs/ 2>/dev/null \
   | grep -v "CHANGELOG.md" \
   | grep -v "/plans/" \
@@ -1857,7 +1857,7 @@ Replace the trailing `⏳` with `✅ (2026-04-28)`.
 - [ ] **Step 6: Re-run the eval suite to confirm Phase-7 baseline still passes**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 TMP=$(python -c "import tempfile, pathlib; tmp = pathlib.Path(tempfile.mkdtemp()); (tmp/'corpus').mkdir(); print(tmp)")
 python skills/crazy-professor/scripts/eval_suite.py \
   --picker skills/crazy-professor/scripts/picker.py \

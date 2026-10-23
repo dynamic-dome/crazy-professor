@@ -28,7 +28,7 @@ description: >
   the mid-tier between single-run and chat; without an explicit pair the
   picker derives a max-tension diagonal.
 metadata:
-  author: domes
+  author: dynamic-dome
   version: '0.15.0'
   part-of: crazy-professor
   layer: divergence

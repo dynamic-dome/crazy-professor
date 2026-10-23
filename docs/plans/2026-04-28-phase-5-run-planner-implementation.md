@@ -11,7 +11,7 @@
 **Spec reference:** `docs/specs/2026-04-28-phase-5-run-planner-design.md` (commit `12cc598`).
 
 **Repo paths:**
-- Repo root: `C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor`
+- Repo root: `<repo-root>`
 - All script paths below are relative to that root.
 
 ---

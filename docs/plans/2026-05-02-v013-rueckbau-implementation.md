@@ -23,7 +23,7 @@ Jeder Task macht entweder Löschungen oder kleinteilige Edits an genau bezeichne
 - [ ] **Pre-Flight Step 1: Repo-Stand verifizieren**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 git status --short
 git log --oneline -3
 ```
@@ -49,7 +49,7 @@ Stelle sicher, dass jede Bullet-Liste in der Spec eine entsprechende Aktion in e
 - [ ] **Step 1: Status prüfen**
 
 ```bash
-cd C:/Users/domes/Desktop/Claude-Plugins-Skills/crazy-professor
+cd <repo-root>
 git status --short docs/plans/2026-05-02-v013-rueckbau-implementation.md
 ```
 
@@ -1242,7 +1242,7 @@ description: >
   with Codex-based scoring. Lab (`--lab` flag, since v0.13.0): opens a
   static review browser for triaging existing outputs.
 metadata:
-  author: domes
+  author: dynamic-dome
   version: '0.13.0'
   part-of: crazy-professor
   layer: divergence
