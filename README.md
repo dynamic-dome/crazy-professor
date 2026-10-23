@@ -73,5 +73,3 @@ stays rolled back (telemetry, voice/word-pool/cross-pollination linters,
 eval-suite, run-planner, patch-suggester, browser playground,
 telegram-dialogue scaffold, ideation-lab v2 design). See
 `docs/CHANGELOG.md` for the v0.15.0, v0.14.0 and v0.13.0 entries.
-
-Local-only.
