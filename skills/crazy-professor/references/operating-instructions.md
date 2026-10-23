@@ -1,6 +1,6 @@
 ---
 title: crazy-professor — Operating Instructions
-status: v0.15.0 (E5 Duet-Mode; E1 Harvest, E2 Dial, E3 Extracted Concepts)
+status: v0.16.0 (random picker; E5 Duet-Mode; E1 Harvest, E2 Dial, E3 Extracted Concepts)
 load_when: any invocation, after parsing the trigger
 path_convention: all paths are relative to plugin repo root <repo-root> = crazy-professor/
 ---
@@ -66,10 +66,15 @@ dedup) is applied inside the script. The dial also weights the operator
 pick (≥75 favors exaggeration/escape, ≤25 favors
 reversal/wishful-thinking, mid-range stays equal).
 
+Since v0.16.0 the picks come from a real random source
+(`random.SystemRandom`), not from the clock. `--seed <int>` makes a pick
+reproducible (tests, comparison runs with the same topic); the JSON then
+carries `random_source: seed:<n>`, otherwise `system`.
+
 If Python is unavailable, use the prose fallback documented in the
-`picker.py` module docstring: `archetype = ARCHETYPES[utc_minute % 4]`,
-`operator = OPERATORS[utc_second % 4]`, random word from the active
-pool minus retired, then variation-guard manually; `cost_mix_target` =
+`picker.py` module docstring: archetype and operator drawn at random
+(never from the clock), random word from the active pool minus retired,
+then variation-guard manually; `cost_mix_target` =
 `wild: round(dial/10)`, `tame: 10 - wild`.
 
 **Step 3: Load the archetype's prompt template.** Read the matching
@@ -206,10 +211,10 @@ Returns one JSON object: `pair` (the two resolved full archetype
 names), `picks` (one `{archetype, word, operator, re_rolled}` per
 archetype), `re_rolled_aggregate`, `dial`. Without `--pair` the picker
 derives a max-tension diagonal (jester×radagast or
-librarian×alchemist), seed-rotated by minute. Word-guard runs
+librarian×alchemist), drawn at random. Word-guard runs
 intra-duet (no duplicate word across the two; marker `intra-duet`).
-Prose fallback if Python is missing: pick the diagonal by
-`utc_minute % 2`, then two words/operators as in the single-run
+Prose fallback if Python is missing: pick one of the two diagonals
+at random, then two words/operators as in the single-run
 fallback with the intra-duet dedup applied manually.
 
 **Step D3: Round 1 — 2 parallel LLM calls.** Each archetype with its

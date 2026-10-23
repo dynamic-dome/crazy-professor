@@ -4,6 +4,18 @@ Neueste Eintraege oben. Format: `## [vX.Y.Z] [YYYY-MM-DD] Kurztitel` für Versio
 
 ---
 
+## [v0.16.0] [2026-10-23] Zufall statt Uhr im Picker
+
+**Versions-Bump-Begründung (per VERSIONING.md):** MINOR, weil sich die Picker-Mechanik ändert und ein neuer Flag (`--seed`) dazukommt.
+
+**Anlass:** Am 2026-10-23 ergaben drei Läufe hintereinander (08:06:42, 11:10:46, 11:14:02 UTC) dreimal systems-alchemist mit escape. Ursache: Stimme = Minute mod 4, Operator = Sekunde mod 4, Wort über Mikrosekunden. Formal korrekt, aber die Uhr ist kein unabhängiger Zufall; wer im Takt arbeitet, bekommt Muster.
+
+- `picker.py`: Stimme, Operator und Wort kommen aus `random.SystemRandom()`; mit `--seed <int>` aus `random.Random(seed)` (reproduzierbar, für Tests und Vergleichsläufe mit derselben Frage). JSON-Feld `random_source` (`system` oder `seed:<n>`). Duett-Paar ohne `--pair` zufällig aus den zwei Spannungs-Diagonalen. Die Wort-Neuwahl im Variation-Guard zieht ebenfalls zufällig. `--force-timestamp` setzt nur noch den Zeitstempel.
+- Unverändert: Variation-Guard (Serienschutz vor der vierten gleichen Stimme, 10-Zeilen-Wortfenster), Dial-Gewichtung der Operatoren, Cost-Mix-Ziel.
+- Tests: sechs neue in `tests/test_picker.py` (gleicher Seed gleicher Wurf, Uhrzeit entscheidet nicht mehr, Gleichverteilung der Stimmen über 4.000 Würfe, hoher Dial bevorzugt wilde Operatoren, Systemquelle ohne Seed, Duett-Diagonale). 14/14 grün.
+- Anleitung, SKILL.md, README, HOW-TO-USE nachgezogen; Prosa-Fallback würfelt jetzt statt die Uhr zu lesen.
+- Version 0.16.0 an den Stellen aus VERSIONING.md.
+
 ## [2026-08-06] Harvest-Trust-Boundary und Picker-Anti-Streak-Fixes
 
 - Harvest liest editierbare `Output file`-Zellen nicht mehr direkt: neuer stdlib-only Loader validiert kanonische Single-/Chat-/Duett-Dateinamen, erzwingt resolved Containment im Projekt-Lab, blockt absolute/traversierende/Symlink-Escape-Pfade vor dem Read und kennzeichnet geladenen Inhalt als untrusted data. Die Operating Instructions verbieten das Befolgen eingebetteter Anweisungen und jeden Direkt-Read-Fallback.

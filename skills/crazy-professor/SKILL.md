@@ -29,7 +29,7 @@ description: >
   picker derives a max-tension diagonal.
 metadata:
   author: dynamic-dome
-  version: '0.15.0'
+  version: '0.16.0'
   part-of: crazy-professor
   layer: divergence
   status: V1 + Chat-Mode + Lab + Dial/Concepts/Harvest (Phase 4-8 rolled back)
@@ -100,7 +100,8 @@ conditions for Radagast outputs since 2026-04-23).
 
 Single Python helper, stdlib-only:
 
-- `picker.py` — deterministic stochastic-element selection with
+- `picker.py` — random element selection (OS random source since v0.16.0,
+  `--seed <int>` for reproducible picks) with
   built-in variation-guard. Reads `field-notes.md`, the active word
   pool, and the retired list. Writes JSON to stdout. Modes: `--mode
   single` (default), `--mode chat`, `--mode duet` (with optional

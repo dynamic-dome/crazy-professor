@@ -1,6 +1,6 @@
 # HOW-TO-USE — crazy-professor
 
-Wegweiser für User und Agent. Stand: v0.15.0 (2026-06-14). Was das Plugin
+Wegweiser für User und Agent. Stand: v0.16.0 (2026-10-23). Was das Plugin
 *ist*, steht im Einzeiler: ein Divergenz-Generator — vier Archetypen
 produzieren seltsame, aber verankerte Provokationen, niemals Ratschläge.
 

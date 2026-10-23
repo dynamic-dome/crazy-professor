@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-crazy-professor picker — deterministic stochastic element selection.
+crazy-professor picker — random element selection with anti-streak guards.
 
 Reads field-notes.md (last 10 Log table rows), applies anti-streak guards,
 emits one JSON object on stdout per invocation.
@@ -15,11 +15,15 @@ Modes:
 
 Options:
     --init-template <path>    if field-notes file is missing, copy this template there first
-    --force-timestamp <iso>   override UTC timestamp (testing only)
+    --force-timestamp <iso>   override UTC timestamp (testing only; no
+                              longer influences the pick since v0.15.1)
+    --seed <int>              reproducible pick (tests, comparison runs).
+                              Without it the picker draws from the OS
+                              random source (random.SystemRandom).
     --pair <a,b>              duet only: two archetypes (short or full
                               names, e.g. "jester,radagast"). When
-                              absent, the picker derives a max-tension
-                              diagonal pair, seed-rotated by minute.
+                              absent, the picker draws one of the two
+                              max-tension diagonal pairs at random.
     --dial <0-100>            wildness dial (default 60). Maps to a target
                               cost-tag mix for the 10 provocations
                               (dial 60 -> 6 wild [high/system-break],
@@ -35,9 +39,14 @@ Exit codes:
     1  usage error / unreadable input
     2  empty word pool (all words filtered by retired list)
 
+Since v0.15.1 archetype, operator and word are drawn from a real random
+source. Before, archetype = minute % 4 and operator = second % 4, which
+produced the same voice/operator three times in a row on 2026-10-23.
+
 Fallback if Python is unavailable (prose mechanic for SKILL.md):
-    archetype = ARCHETYPES[utc_minute % 4]
-    operator  = OPERATORS[utc_second % 4]
+    archetype = a random one of the four (e.g. a die or any random source,
+                never the clock)
+    operator  = a random one of the four
     word      = random pick from active pool minus retired
     Then apply variation_guard manually:
         if last 3 archetypes == this archetype: pick the least-recently-seen of the others
@@ -49,6 +58,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import random
 import re
 import shutil
 import sys
@@ -74,8 +84,8 @@ ARCHETYPE_ALIASES = {
     "radagast-brown": "radagast-brown",
 }
 # The two maximum-value-tension diagonals: break vs. shelter, and
-# foreign-import vs. self-analysis. The default duet pair rotates
-# between them by minute (see resolve_pair).
+# foreign-import vs. self-analysis. The default duet pair is drawn
+# at random between them (see resolve_pair).
 TENSION_DIAGONALS = (
     ("first-principles-jester", "radagast-brown"),
     ("labyrinth-librarian", "systems-alchemist"),
@@ -166,20 +176,18 @@ def cost_mix_target(dial: int) -> dict:
     return {"wild": wild, "tame": 10 - wild}
 
 
-def picker_seed(
-    ts: dt.datetime, offset_seconds: int = 0, dial: int = DIAL_DEFAULT
-) -> tuple[str, str, str]:
-    """Deterministic mod-based picker for archetype/operator (and timestamp ISO).
+def make_rng(seed: int | None = None) -> random.Random:
+    """Random source for all picks: seeded (reproducible) or the OS source."""
+    return random.Random(seed) if seed is not None else random.SystemRandom()
 
-    Archetype: minute mod 4
-    Operator:  second mod len(pool); pool is dial-weighted since v0.14.0
-               (equal 4-operator distribution at default mid-range dial)
-    """
-    seed_ts = ts + dt.timedelta(seconds=offset_seconds)
-    archetype = ARCHETYPES[seed_ts.minute % 4]
-    pool = operator_pool(dial)
-    operator = pool[seed_ts.second % len(pool)]
-    return archetype, operator, seed_ts.isoformat().replace("+00:00", "Z")
+
+def pick_archetype_operator(rng: random.Random, dial: int = DIAL_DEFAULT) -> tuple[str, str]:
+    """Random archetype (uniform) and operator (dial-weighted pool since v0.14.0)."""
+    return rng.choice(ARCHETYPES), rng.choice(operator_pool(dial))
+
+
+def iso(ts: dt.datetime) -> str:
+    return ts.isoformat().replace("+00:00", "Z")
 
 
 def variation_guard(
@@ -187,7 +195,7 @@ def variation_guard(
     word: str,
     last_rows: list[dict],
     available_words: list[str],
-    seed_ts: dt.datetime,
+    rng: random.Random,
 ) -> tuple[str, str, str]:
     """Apply anti-streak rules. Returns (archetype, word, re_rolled)."""
     re_rolled = "no"
@@ -212,28 +220,28 @@ def variation_guard(
     if word in last_words:
         remaining = [w for w in available_words if w not in last_words and w != word]
         if remaining:
-            idx = (seed_ts.microsecond + len(last_rows)) % len(remaining)
-            word = remaining[idx]
+            word = rng.choice(remaining)
             re_rolled = "both" if re_rolled == "archetype" else "word"
         # else: pool exhausted, accept original word; re_rolled stays as-is
 
     return archetype, word, re_rolled
 
 
-def pick_word(available_words: list[str], seed_ts: dt.datetime, offset: int = 0) -> str:
-    """Deterministic word pick from microseconds + offset."""
-    idx = (seed_ts.microsecond + offset) % len(available_words)
-    return available_words[idx]
+def pick_word(available_words: list[str], rng: random.Random) -> str:
+    """Random word from the active pool."""
+    return rng.choice(available_words)
 
 
 def pick_single(
-    words: list[str], rows: list[dict], ts: dt.datetime, dial: int = DIAL_DEFAULT
+    words: list[str], rows: list[dict], ts: dt.datetime, dial: int = DIAL_DEFAULT,
+    rng: random.Random | None = None,
 ) -> dict:
-    archetype, operator, ts_iso = picker_seed(ts, dial=dial)
-    word = pick_word(words, ts)
-    archetype, word, re_rolled = variation_guard(archetype, word, rows, words, ts)
+    rng = rng or make_rng()
+    archetype, operator = pick_archetype_operator(rng, dial)
+    word = pick_word(words, rng)
+    archetype, word, re_rolled = variation_guard(archetype, word, rows, words, rng)
     return {
-        "timestamp": ts_iso,
+        "timestamp": iso(ts),
         "mode": "single",
         "archetype": archetype,
         "word": word,
@@ -246,16 +254,17 @@ def pick_single(
 
 
 def pick_chat(
-    words: list[str], rows: list[dict], ts: dt.datetime, dial: int = DIAL_DEFAULT
+    words: list[str], rows: list[dict], ts: dt.datetime, dial: int = DIAL_DEFAULT,
+    rng: random.Random | None = None,
 ) -> dict:
     """Four picks, one per archetype. Word-guard runs across the chat-run."""
+    rng = rng or make_rng()
     chat_rolled = []
     chat_words: set[str] = set()
     picks = []
     for i, archetype in enumerate(ARCHETYPES):
-        offset = i  # one second per archetype to vary operator pick
-        _, operator, _ = picker_seed(ts, offset_seconds=offset)
-        word = pick_word(words, ts, offset=i * 7)  # spread word picks
+        operator = rng.choice(OPERATORS)  # chat ignores the dial (see --dial help)
+        word = pick_word(words, rng)
         intra_chat = "no"
         if word in chat_words:
             for candidate in words:
@@ -265,7 +274,7 @@ def pick_chat(
                     break
         chat_words.add(word)
         archetype_kept, word_kept, re_rolled = variation_guard(
-            archetype, word, rows, [w for w in words if w not in chat_words or w == word], ts
+            archetype, word, rows, [w for w in words if w not in chat_words or w == word], rng
         )
         # In chat we never re-roll the archetype itself (one of each)
         archetype_kept = archetype
@@ -284,7 +293,7 @@ def pick_chat(
         chat_rolled.append(re_rolled)
     aggregate = "no" if all(r == "no" for r in chat_rolled) else "/".join(chat_rolled)
     return {
-        "timestamp": ts.isoformat().replace("+00:00", "Z"),
+        "timestamp": iso(ts),
         "mode": "chat",
         "picks": picks,
         "re_rolled_aggregate": aggregate,
@@ -293,12 +302,12 @@ def pick_chat(
     }
 
 
-def resolve_pair(pair_arg: str | None, ts: dt.datetime) -> tuple[tuple[str, str] | None, str | None]:
+def resolve_pair(pair_arg: str | None, rng: random.Random) -> tuple[tuple[str, str] | None, str | None]:
     """Resolve a duet pair. Returns (pair, error).
 
     With --pair: parse two comma-separated archetype names (short or
     full), validate distinctness and membership. Without --pair: derive
-    a max-tension diagonal, seed-rotated by minute.
+    one of the two max-tension diagonals at random.
     """
     if pair_arg:
         parts = [p.strip().lower() for p in pair_arg.split(",") if p.strip()]
@@ -318,7 +327,7 @@ def resolve_pair(pair_arg: str | None, ts: dt.datetime) -> tuple[tuple[str, str]
         if resolved[0] == resolved[1]:
             return None, "--pair needs two distinct archetypes"
         return (resolved[0], resolved[1]), None
-    return TENSION_DIAGONALS[ts.minute % 2], None
+    return rng.choice(TENSION_DIAGONALS), None
 
 
 def pick_duet(
@@ -327,18 +336,20 @@ def pick_duet(
     ts: dt.datetime,
     dial: int = DIAL_DEFAULT,
     pair: tuple[str, str] | None = None,
+    rng: random.Random | None = None,
 ) -> dict:
     """Two picks for a fixed archetype pair. Word-guard runs intra-duet.
 
     Unlike chat, the archetypes are fixed (chosen or derived), so the
     variation-guard never re-rolls the archetype itself — only words.
     """
+    rng = rng or make_rng()
     duet_words: set[str] = set()
     picks = []
     rolled = []
     for i, archetype in enumerate(pair):
-        _, operator, _ = picker_seed(ts, offset_seconds=i, dial=dial)
-        word = pick_word(words, ts, offset=i * 11)
+        operator = rng.choice(operator_pool(dial))
+        word = pick_word(words, rng)
         intra = "no"
         if word in duet_words:
             for candidate in words:
@@ -348,7 +359,7 @@ def pick_duet(
                     break
         duet_words.add(word)
         _, word_kept, re_rolled = variation_guard(
-            archetype, word, rows, [w for w in words if w not in duet_words or w == word], ts
+            archetype, word, rows, [w for w in words if w not in duet_words or w == word], rng
         )
         if re_rolled == "archetype":
             re_rolled = "no"
@@ -365,7 +376,7 @@ def pick_duet(
         rolled.append(re_rolled)
     aggregate = "no" if all(r == "no" for r in rolled) else "/".join(rolled)
     return {
-        "timestamp": ts.isoformat().replace("+00:00", "Z"),
+        "timestamp": iso(ts),
         "mode": "duet",
         "pair": list(pair),
         "picks": picks,
@@ -386,6 +397,8 @@ def main() -> int:
     p.add_argument("--init-template", type=Path,
                    help="copy this file to --field-notes if missing")
     p.add_argument("--force-timestamp", help="ISO-8601 UTC override (testing)")
+    p.add_argument("--seed", type=int,
+                   help="reproducible pick; default draws from the OS random source")
     p.add_argument("--dial", type=int, default=DIAL_DEFAULT,
                    help="wildness dial 0-100 (default 60); maps to a "
                         "cost-tag mix target and operator weighting "
@@ -426,17 +439,19 @@ def main() -> int:
         print("error: empty word pool (all words filtered by retired list)", file=sys.stderr)
         return 2
     rows = read_last_log_rows(args.field_notes, n=10)
+    rng = make_rng(args.seed)
 
     if args.mode == "single":
-        result = pick_single(words, rows, ts, dial=args.dial)
+        result = pick_single(words, rows, ts, dial=args.dial, rng=rng)
     elif args.mode == "chat":
-        result = pick_chat(words, rows, ts, dial=args.dial)
+        result = pick_chat(words, rows, ts, dial=args.dial, rng=rng)
     else:
-        pair, err = resolve_pair(args.pair, ts)
+        pair, err = resolve_pair(args.pair, rng)
         if err:
             print(f"error: {err}", file=sys.stderr)
             return 1
-        result = pick_duet(words, rows, ts, dial=args.dial, pair=pair)
+        result = pick_duet(words, rows, ts, dial=args.dial, pair=pair, rng=rng)
+    result["random_source"] = f"seed:{args.seed}" if args.seed is not None else "system"
 
     json.dump(result, sys.stdout, ensure_ascii=False)
     sys.stdout.write("\n")

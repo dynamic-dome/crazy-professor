@@ -11,7 +11,7 @@ Pfad: `.agent-memory/lab/crazy-professor/duet/YYYY-MM-DD-HHMM-<topic-slug>.md`
 ---
 skill: crazy-professor
 mode: duet
-version: 0.15.0
+version: 0.16.0
 timestamp: <ISO-8601 UTC>
 topic: "<user input, one line, unmodified>"
 pair: [<archetype-a>, <archetype-b>]
