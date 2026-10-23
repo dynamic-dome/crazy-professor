@@ -18,6 +18,14 @@ Default mode returns 10 provocations from one voice, plus 3 extracted mechanism-
 
 ## Install
 
+In one step (Claude Code 2.1.275 or later):
+
+```text
+/plugin install crazy-professor --marketplace dynamic-dome/crazy-professor
+```
+
+Or from the shell:
+
 ```bash
 claude plugin marketplace add dynamic-dome/crazy-professor
 claude plugin install crazy-professor --scope user
