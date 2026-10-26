@@ -53,7 +53,7 @@ Status-Symbole: ✅ erledigt / 🟡 in Arbeit / ⏳ geplant / ❌ blockiert oder
 | 1.1 | Input-/Trigger-Vertrag vereinheitlichen: `README.md:41`, `commands/crazy.md:12-17` und `SKILL.md:173-176, 253-255` auf eine einzige Semantik bringen für leeres Topic und `--chat` ohne Topic | Konflikt-aufgelöst | Codex (Original D1) | hoch |
 | 1.2 | `--chat` ohne Topic explizit ablehnen mit klarer Fehlermeldung | Konsens | Codex+Claude | hoch |
 | 1.3 | `docs/chat-mode-flow.md` und `references/chat-mode-flow.md` auf einen Single-Source-of-Truth zusammenführen (Symlink, Generierung oder Streichung) | Konsens | Codex+Claude | mittel |
-| 1.4 | `docs/PROJECT.md` + `docs/CAPABILITIES.md` + `docs/ARCHITECTURE.md` + `docs/CHANGELOG.md` aus globalem Template (`~/wiki/templates/project-docs/`) anlegen | Konsens | Codex+Claude | mittel |
+| 1.4 | `docs/PROJECT.md` + `docs/CAPABILITIES.md` + `docs/ARCHITECTURE.md` + `docs/CHANGELOG.md` aus globalem Template (`<wiki>/templates/project-docs/`) anlegen | Konsens | Codex+Claude | mittel |
 | 1.5 | Mehrwort-Provocation-Words (`provocation-words.txt:25, 27, 41`: „ritual debt", „shadow pricing", „smoke test" etc.) klären: entweder explizit erlauben und `output-template.md:15-17` anpassen, oder Pool auf echte Einzelwörter reduzieren | Synthese | Codex+Claude | mittel |
 | 1.6 | SKILL.md von 451 auf ~150 Zeilen trimmen: Operating-Instructions + Hard Rules nach `references/operating-instructions.md` und `references/hard-rules.md` extrahieren | Ergänzung | Claude (V8) | mittel |
 

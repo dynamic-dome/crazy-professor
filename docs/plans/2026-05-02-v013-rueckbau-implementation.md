@@ -714,7 +714,7 @@ Hinweise zur neuen Version:
 
 ```bash
 python skills/crazy-professor/scripts/picker.py \
-  --field-notes ~/Desktop/.agent-memory/lab/crazy-professor/field-notes.md \
+  --field-notes <agent-memory>/lab/crazy-professor/field-notes.md \
   --words skills/crazy-professor/resources/provocation-words.txt \
   --retired skills/crazy-professor/resources/retired-words.txt \
   --mode single
@@ -726,7 +726,7 @@ Erwartet: ein JSON-Objekt auf stdout mit Schlüsseln: `timestamp`, `mode`, `arch
 
 ```bash
 python skills/crazy-professor/scripts/picker.py \
-  --field-notes ~/Desktop/.agent-memory/lab/crazy-professor/field-notes.md \
+  --field-notes <agent-memory>/lab/crazy-professor/field-notes.md \
   --words skills/crazy-professor/resources/provocation-words.txt \
   --retired skills/crazy-professor/resources/retired-words.txt \
   --mode chat
@@ -1737,7 +1737,7 @@ In Claude-Code-Session (interaktiv):
 
 Erwartet:
 - Skill rennt durch ohne Fehler
-- Output-File entsteht in `~/Desktop/.agent-memory/lab/crazy-professor/2026-05-02-HHMM-schreibtisch-aufraeumen.md` (oder ähnlich)
+- Output-File entsteht in `<agent-memory>/lab/crazy-professor/2026-05-02-HHMM-schreibtisch-aufraeumen.md` (oder ähnlich)
 - File hat: Frontmatter mit `mode: single` + `version: 0.13.0`, Divergence-Banner, **exakt 10** Provokationen mit Pattern `<text> -- [cost: X] -- anchor: Y`, "Next Experiment"-Section, "Self-Flag"-Checkbox-Section
 - Field-notes bekommt **eine** neue Row angehängt (Run-Nummer +1, mode:single)
 
@@ -1751,7 +1751,7 @@ Manuell prüfen, ob die 10 Provokationen tatsächlich 10 sind, ob das Format pas
 
 Erwartet:
 - Skill rennt durch ohne Fehler (~2-4 min)
-- Output-File entsteht in `~/Desktop/.agent-memory/lab/crazy-professor/chat/2026-05-02-HHMM-plugin-marketplace-strategie.md`
+- Output-File entsteht in `<agent-memory>/lab/crazy-professor/chat/2026-05-02-HHMM-plugin-marketplace-strategie.md`
 - File hat: Frontmatter mit `mode: chat` + `distiller` + `round1_picks` + `round2_status`, Divergence-Banner, **Round 1** (4×5 Provokationen), **Round 2** (oder `round2_status: degraded`), **Round 3** (4×5 Final-Ideen + Top-3 + Next Experiment)
 - Field-notes bekommt **eine** neue Row angehängt (mode:chat, archetype: all-4, word: multi)
 - Codex-Subagent wurde aufgerufen (oder Claude-Fallback griff)

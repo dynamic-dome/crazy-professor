@@ -1150,7 +1150,7 @@ Expected: `diff-exit=0` (files identical).
 Build with the Desktop field-notes path (if it exists) to confirm the footer data is inlined:
 
 ```bash
-FN_PATH="$HOME/Desktop/.agent-memory/lab/crazy-professor/field-notes.md"
+FN_PATH="<agent-memory>/lab/crazy-professor/field-notes.md"
 if [ -f "$FN_PATH" ]; then
   TMP_OUT=$(python -c "import tempfile, pathlib; print(pathlib.Path(tempfile.mkdtemp()) / 'pg-with-fn.html')")
   python skills/crazy-professor/scripts/build_playground.py \
@@ -1245,7 +1245,7 @@ EOF
 Open `skills/crazy-professor/references/operating-instructions.md`. Find the existing `--dry-run` bullet block in Step 1 (around line 42, the one that ends with `Combining --chat --dry-run is rejected at the command layer (commands/crazy.md).`). Append a new bullet immediately after it (still inside Step 1):
 
 ```markdown
-- **Single-run with `--playground` (since v0.12.0, single-run only and standalone):** instead of parsing a topic and generating provocations, run `python <repo-root>/skills/crazy-professor/scripts/build_playground.py` with the active resource files (`provocation-words.txt`, `retired-words.txt`, `po-operators.md`) and the field-notes path (local `.agent-memory/lab/crazy-professor/field-notes.md` first, Desktop-fallback `~/Desktop/.agent-memory/lab/crazy-professor/field-notes.md` if local missing). Pass `--version` from `.claude-plugin/plugin.json`. The script writes/refreshes `<repo-root>/skills/crazy-professor/playground/index.html`. Then open the HTML file via the OS's default browser handler (Python `webbrowser.open()`, fallback: print `Open this file manually: file://<absolute-path>`). No topic argument is parsed — the playground accepts the topic via its input field. The reject-matrix is: `--playground` rejects in combination with `--chat`, `--from-session`, `--dry-run`, `--compact`, or `--strict-cross-pollination`. Reject message: `--playground is single-run only and standalone (no --chat/--from-session/--dry-run/--compact/--strict-cross-pollination combinations).`
+- **Single-run with `--playground` (since v0.12.0, single-run only and standalone):** instead of parsing a topic and generating provocations, run `python <repo-root>/skills/crazy-professor/scripts/build_playground.py` with the active resource files (`provocation-words.txt`, `retired-words.txt`, `po-operators.md`) and the field-notes path (local `.agent-memory/lab/crazy-professor/field-notes.md` first, Desktop-fallback `<agent-memory>/lab/crazy-professor/field-notes.md` if local missing). Pass `--version` from `.claude-plugin/plugin.json`. The script writes/refreshes `<repo-root>/skills/crazy-professor/playground/index.html`. Then open the HTML file via the OS's default browser handler (Python `webbrowser.open()`, fallback: print `Open this file manually: file://<absolute-path>`). No topic argument is parsed — the playground accepts the topic via its input field. The reject-matrix is: `--playground` rejects in combination with `--chat`, `--from-session`, `--dry-run`, `--compact`, or `--strict-cross-pollination`. Reject message: `--playground is single-run only and standalone (no --chat/--from-session/--dry-run/--compact/--strict-cross-pollination combinations).`
 ```
 
 - [ ] **Step 2: Verify**

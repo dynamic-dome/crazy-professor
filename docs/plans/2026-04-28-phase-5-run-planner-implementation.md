@@ -410,7 +410,7 @@ Run:
 ```bash
 python skills/crazy-professor/scripts/run_planner.py session \
   --session-path .agent-memory/session-summary.md \
-  --session-path ~/Desktop/.agent-memory/session-summary.md
+  --session-path <agent-memory>/session-summary.md
 ```
 Expected: JSON with `topic_candidates` containing 3 entries from the local + Desktop summaries. Each entry has `topic`, `source`, `rank` keys. Exit 0.
 
@@ -500,7 +500,7 @@ python skills/crazy-professor/scripts/run_planner.py plan \
   --topic "deploy pipeline simplification" \
   --keywords skills/crazy-professor/resources/archetype-keywords.txt \
   --session-path .agent-memory/session-summary.md \
-  --session-path ~/Desktop/.agent-memory/session-summary.md
+  --session-path <agent-memory>/session-summary.md
 ```
 Expected: JSON with `selected_archetype: "systems-alchemist"` AND `topic_candidates` populated with 3 entries. Exit 0.
 

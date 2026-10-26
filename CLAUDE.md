@@ -34,5 +34,5 @@ Pflichtlektüre zuerst: `HOW-TO-USE.md` (Wegweiser), dann je nach Aufgabe
    Architektur-Änderung → ARCHITECTURE.md; jede Session mit Substanz →
    CHANGELOG.md; neue Komponente → HOW-TO-USE.md.
 
-Vorrang: explizite User-Anweisung > `~/AI/SESSION-WORKFLOW.md` > diese
+Vorrang: explizite User-Anweisung > `SESSION-WORKFLOW.md` des Meta-Workspace > diese
 Datei > globale Defaults.

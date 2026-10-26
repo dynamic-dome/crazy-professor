@@ -107,6 +107,6 @@ Fallback: Claude-Distiller als Fallback akzeptiert für v0.5.0. Aber Codex-Pfad 
 ## Abschluss-Synthese (nach Release)
 
 Nach erfolgreichem Abschluss (alle 8 Phasen ✅) wird eine Synthese-Datei geschrieben:
-`~/wiki/synthesis/crazy-professor-chat-mode-2026-MM.md`
+`<wiki>/synthesis/crazy-professor-chat-mode-2026-MM.md`
 
 Format analog `vault-hardening-2026-04.md`: Current thesis, Supporting evidence, Counter-evidence, What to investigate next.
