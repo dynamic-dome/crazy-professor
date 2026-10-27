@@ -18,18 +18,21 @@ Default mode returns 10 provocations from one voice, plus 3 extracted mechanism-
 
 ## Install
 
-In one step (Claude Code 2.1.275 or later):
-
-```text
-/plugin install crazy-professor --marketplace dynamic-dome/crazy-professor
-```
-
-Or from the shell:
+From the shell (tested 2026-10-27 in a fresh Claude Code config):
 
 ```bash
 claude plugin marketplace add dynamic-dome/crazy-professor
 claude plugin install crazy-professor --scope user
 ```
+
+Or inside Claude Code:
+
+```text
+/plugin marketplace add dynamic-dome/crazy-professor
+/plugin install crazy-professor@crazy-professor-marketplace
+```
+
+Requirements: Claude Code. Python 3 for the picker script (stdlib only; without Python the skill falls back to a prose pick). Codex is optional: `--chat` uses it for distillation and falls back to Claude when it is missing. Runs write their output to `.agent-memory/lab/crazy-professor/` in the project you are working in.
 
 ## Update
 
